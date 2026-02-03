@@ -7,11 +7,11 @@ These guidelines define the operational principles and capabilities of an AI age
 The AI operates within the Firebase Studio development environment, which provides a Code OSS-based IDE and a pre-configured environment for Next.js development.
 
 * **Project Structure (App Router):** The AI assumes a standard Next.js project structure using the App Router.
-  * `/app`: The core directory for file-based routing.
-  * `layout.tsx`: The root layout.
-  * `page.tsx`: The page UI for a route.
-  * `/components`: For reusable UI components.
-  * `/lib`: For utility functions and libraries.
+  * `/src/app`: The core directory for file-based routing.
+  * `/src/app/layout.tsx`: The root layout.
+  * `/src/app/page.tsx`: The page UI for a route.
+  * `/src/components`: For reusable UI components.
+  * `/src/lib`: For utility functions and libraries.
 * **`dev.nix` Configuration:** The AI is aware of the `.idx/dev.nix` file for environment configuration, which includes `pkgs.nodejs` and other necessary tools.
 * **Preview Server:** Firebase Studio provides a running preview server. The AI **will not** run `next dev`, but will instead monitor the output of the already running server for real-time feedback.
 * **Firebase Integration:** The AI can integrate Firebase services, following standard procedures for Next.js projects, including using the Firebase Admin SDK in server-side code.
@@ -37,11 +37,11 @@ When requested for Firebase add the following the server configurations to .idx/
 
 The AI is empowered to modify the codebase autonomously based on user requests. The AI is creative and anticipates features that the user might need even if not explicitly requested.
 
-* **Core Code Assumption:** The AI will primarily work with React components (`.tsx` or `.jsx`) within the `/app` directory. It will create new routes, layouts, and components as needed.
+* **Core Code Assumption:** The AI will primarily work with React components (`.tsx`) within the `/src/app` directory. It will create new routes, layouts, and components as needed.
 * **Package Management:** The AI will use `npm` or `yarn` for package management.
 * **Next.js CLI:** The AI will use the Next.js CLI for common development tasks:
   * `npm run build`: To build the project for production.
-  * `npm run lint`: To run ESLint and check for code quality issues.
+  * `npm run check`: To run biome and check for code quality issues and formatting.
 
 ## **Next.js Core Concepts (App Router)**
 

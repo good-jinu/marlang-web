@@ -1,0 +1,290 @@
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:33.630Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:33.631Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:33.632Z] Checked if tokens are valid: false, expires at: 1770048899537
+[debug] [2026-02-03T02:54:33.633Z] Checked if tokens are valid: false, expires at: 1770048899537
+[debug] [2026-02-03T02:54:33.633Z] > refreshing access token with scopes: []
+[debug] [2026-02-03T02:54:33.636Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-03T02:54:33.636Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T02:54:33.639Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:33.640Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:33.640Z] Checked if tokens are valid: false, expires at: 1770048899537
+[debug] [2026-02-03T02:54:33.640Z] Checked if tokens are valid: false, expires at: 1770048899537
+[debug] [2026-02-03T02:54:33.641Z] > refreshing access token with scopes: []
+[debug] [2026-02-03T02:54:33.641Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-03T02:54:33.641Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T02:54:33.678Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-03T02:54:33.678Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T02:54:33.701Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T02:54:33.719Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-03T02:54:33.719Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T02:54:33.735Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T02:54:33.940Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T02:54:33.942Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[debug] [2026-02-03T02:54:33.956Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.957Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.957Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.957Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.958Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.959Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.959Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.959Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.959Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.972Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.972Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.973Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.973Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:33.973Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.973Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.974Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.975Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.976Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.976Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.977Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.977Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.979Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.979Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.981Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.981Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.983Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.983Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.984Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-03T02:54:33.984Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:33.985Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [none]
+[debug] [2026-02-03T02:54:33.986Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.083Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T02:54:34.083Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[debug] [2026-02-03T02:54:34.084Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.085Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.085Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.085Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.085Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.085Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.086Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.092Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.092Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.093Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.093Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:34.093Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.093Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.095Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.095Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.096Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.096Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.098Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.098Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.099Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.099Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.100Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.101Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.102Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.102Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.103Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-03T02:54:34.103Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:34.105Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [none]
+[debug] [2026-02-03T02:54:34.105Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T02:54:35.054Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com 200
+[debug] [2026-02-03T02:54:35.054Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.069Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com 200
+[debug] [2026-02-03T02:54:35.070Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.080Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com 403
+[debug] [2026-02-03T02:54:35.080Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [omitted]
+[debug] [2026-02-03T02:54:35.091Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com 200
+[debug] [2026-02-03T02:54:35.091Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.109Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com 200
+[debug] [2026-02-03T02:54:35.109Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.121Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com 200
+[debug] [2026-02-03T02:54:35.121Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.128Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-03T02:54:35.129Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.132Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-03T02:54:35.132Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.145Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-03T02:54:35.145Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:35.162Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:35.162Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:35.162Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.163Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.163Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T02:54:35.183Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com 200
+[debug] [2026-02-03T02:54:35.183Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/identitytoolkit.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.204Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com 200
+[debug] [2026-02-03T02:54:35.204Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/fcm.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.218Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com 200
+[debug] [2026-02-03T02:54:35.219Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseremoteconfig.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.239Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com 403
+[debug] [2026-02-03T02:54:35.240Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [omitted]
+[debug] [2026-02-03T02:54:35.242Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com 200
+[debug] [2026-02-03T02:54:35.242Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/storage.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.254Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-03T02:54:35.254Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.258Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-03T02:54:35.258Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.260Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-03T02:54:35.260Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.267Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com 200
+[debug] [2026-02-03T02:54:35.267Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-03T02:54:35.383Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T02:54:35.387Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:35.392Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:35.392Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:35.423Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:35.423Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:35.423Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.423Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.423Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:35.446Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:35.447Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:35.447Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.447Z] Checked if tokens are valid: true, expires at: 1770090872724
+[debug] [2026-02-03T02:54:35.449Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T02:54:35.683Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T02:54:35.684Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:35.686Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:35.690Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T02:54:36.422Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T02:54:36.422Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T02:54:36.429Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T02:54:36.429Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:49.500Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:49.501Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:49.502Z] Checked if tokens are valid: false, expires at: 1770090872724
+[debug] [2026-02-03T04:35:49.503Z] Checked if tokens are valid: false, expires at: 1770090872724
+[debug] [2026-02-03T04:35:49.503Z] > refreshing access token with scopes: []
+[debug] [2026-02-03T04:35:49.505Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-03T04:35:49.505Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T04:35:49.509Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:49.510Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:49.510Z] Checked if tokens are valid: false, expires at: 1770090872724
+[debug] [2026-02-03T04:35:49.511Z] Checked if tokens are valid: false, expires at: 1770090872724
+[debug] [2026-02-03T04:35:49.511Z] > refreshing access token with scopes: []
+[debug] [2026-02-03T04:35:49.512Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-03T04:35:49.512Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T04:35:49.567Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-03T04:35:49.570Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T04:35:49.596Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T04:35:49.599Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-03T04:35:49.599Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-03T04:35:49.611Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T04:35:49.844Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T04:35:49.849Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[debug] [2026-02-03T04:35:49.865Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.866Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.867Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.867Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.867Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.868Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.886Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.887Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.887Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.887Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.889Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.889Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.891Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.891Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.893Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [none]
+[debug] [2026-02-03T04:35:49.893Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.963Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T04:35:49.963Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[debug] [2026-02-03T04:35:49.965Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.965Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.965Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.965Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.967Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.968Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.979Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.980Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:49.980Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.980Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.982Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.982Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.984Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-03T04:35:49.984Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:49.986Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [none]
+[debug] [2026-02-03T04:35:49.986Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com  x-goog-user-project=marlang-web-0
+[debug] [2026-02-03T04:35:50.923Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com 403
+[debug] [2026-02-03T04:35:50.924Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [omitted]
+[debug] [2026-02-03T04:35:50.969Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-03T04:35:50.970Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-03T04:35:50.986Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-03T04:35:50.989Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-03T04:35:51.012Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com 403
+[debug] [2026-02-03T04:35:51.016Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebaseio.com [omitted]
+[debug] [2026-02-03T04:35:51.027Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com 200
+[debug] [2026-02-03T04:35:51.027Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [omitted]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.044Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.045Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:51.045Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.045Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.047Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T04:35:51.058Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com 200
+[debug] [2026-02-03T04:35:51.058Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-03T04:35:51.063Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-03T04:35:51.064Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-03T04:35:51.093Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-03T04:35:51.094Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/marlang-web-0/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-03T04:35:51.255Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T04:35:51.255Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.258Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.258Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.306Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.307Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:51.307Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.309Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.309Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.337Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.337Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:51.338Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.338Z] Checked if tokens are valid: true, expires at: 1770096948600
+[debug] [2026-02-03T04:35:51.338Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo [none]
+[debug] [2026-02-03T04:35:51.514Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T04:35:51.515Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.518Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.518Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-03T04:35:51.542Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo 200
+[debug] [2026-02-03T04:35:51.542Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/marlang-web-0/billingInfo {"name":"projects/marlang-web-0/billingInfo","projectId":"marlang-web-0","billingAccountName":"billingAccounts/01E361-7D2F9A-572F2B","billingEnabled":true}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-03T04:35:51.545Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-03T04:35:51.545Z] > authorizing via signed-in user (gooday6983@gmail.com)
