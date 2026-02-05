@@ -6,17 +6,20 @@
 			"region": "asia-east1"
 		}
 	},
-	"functions": {
-		"source": "functions",
-		"codebase": "default",
-		"ignore": [
-			"node_modules",
-			".git",
-			"firebase-debug.log",
-			"firebase-debug.*.log",
-			"*.local"
-		]
-	},
+	"functions": [
+		{
+			"source": "functions",
+			"codebase": "default",
+			"ignore": [
+				"node_modules",
+				".git",
+				"firebase-debug.log",
+				"firebase-debug.*.log",
+				"*.local"
+			],
+			"predeploy": ["npm --prefix functions run build"]
+		}
+	],
 	"firestore": {
 		"rules": "firestore.rules",
 		"indexes": "firestore.indexes.json"

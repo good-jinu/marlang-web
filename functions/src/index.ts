@@ -1,7 +1,7 @@
-import { onSchedule } from "firebase-functions/v2/scheduler";
-import { getFirestore, Timestamp } from "firebase-admin/firestore";
-import { initializeApp } from "firebase-admin/app";
 import { VertexAI } from "@google-cloud/vertexai";
+import { initializeApp } from "firebase-admin/app";
+import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 initializeApp();
 
@@ -179,5 +179,5 @@ export const generateDailyBlogPost = onSchedule(
 		} catch (error) {
 			console.error("AI Generation failed:", error);
 		}
-	}
+	},
 );

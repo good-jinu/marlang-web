@@ -13,7 +13,8 @@
 			"!**/.firebase",
 			"!**/.idx",
 			"!**/.next",
-			"!**/.vscode"
+			"!**/.vscode",
+			"!functions/lib"
 		]
 	},
 	"formatter": {
