@@ -33,12 +33,13 @@ export default function CatCharacter() {
 	}, []);
 
 	// SVG path transitions based on emotion
-	const getEyePath = (emotion: Emotion, _side: "left" | "right") => {
+	const getEyePath = (emotion: Emotion, side: "left" | "right") => {
+		const isLeft = side === "left";
 		switch (emotion) {
 			case "happy":
-				return "M 35 45 Q 40 40 45 45"; // Curved happy eyes
+				return isLeft ? "M 35 45 Q 40 40 45 45" : "M 65 45 Q 70 40 75 45"; // Curved happy eyes
 			case "sleepy":
-				return "M 35 45 Q 40 48 45 45"; // Closed eyes
+				return isLeft ? "M 35 45 Q 40 48 45 45" : "M 65 45 Q 70 48 75 45"; // Closed eyes
 			case "surprised":
 				return "M 40 45 A 5 5 0 1 1 40 44.9"; // Wide circles
 			default:
@@ -52,8 +53,6 @@ export default function CatCharacter() {
 				return "M 45 65 Q 50 70 55 65"; // Smile
 			case "excited":
 				return "M 42 65 Q 50 75 58 65"; // Wide smile
-			case "surprised":
-				return "M 47 68 A 3 3 0 1 1 47 67.9"; // Small 'o'
 			case "thoughtful":
 				return "M 45 68 L 55 68"; // Straight line
 			default:
@@ -144,14 +143,37 @@ export default function CatCharacter() {
 					<motion.path d="M 48 58 L 52 58 L 50 62 Z" fill="#f6ad55" />
 
 					{/* Mouth */}
-					<motion.path
-						initial={false}
-						animate={{ d: getMouthPath(emotion) }}
-						fill="none"
-						stroke="#2d3748"
-						strokeWidth="2"
-						strokeLinecap="round"
-					/>
+					<AnimatePresence initial={false} mode="wait">
+						{emotion === "surprised" ? (
+							<motion.circle
+								key="mouth-surprised"
+								cx="50"
+								cy="68"
+								r="3"
+								fill="#2d3748"
+								initial={{ opacity: 0, scale: 0.5 }}
+								animate={{ opacity: 1, scale: 1 }}
+								exit={{ opacity: 0, scale: 0.5 }}
+								transition={{ duration: 0.2 }}
+							/>
+						) : (
+							<motion.path
+								key="mouth-normal"
+								initial={{ opacity: 0, pathLength: 0 }}
+								animate={{
+									opacity: 1,
+									pathLength: 1,
+									d: getMouthPath(emotion),
+								}}
+								exit={{ opacity: 0, pathLength: 0 }}
+								fill="none"
+								stroke="#2d3748"
+								strokeWidth="2"
+								strokeLinecap="round"
+								transition={{ duration: 0.3 }}
+							/>
+						)}
+					</AnimatePresence>
 
 					{/* Whiskers */}
 					<line
