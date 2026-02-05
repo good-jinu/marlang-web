@@ -59,7 +59,9 @@ export default function AdminDashboard() {
 				const q = query(postsRef, orderBy("createdAt", "desc"), limit(5));
 				const recentSnapshot = await getDocs(q);
 				setRecentPosts(
-					recentSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+					recentSnapshot.docs.map(
+						(doc) => ({ ...doc.data(), id: doc.id }) as Post,
+					),
 				);
 			} catch (error) {
 				console.error("Error fetching dashboard data:", error);
