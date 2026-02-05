@@ -288,3 +288,51 @@
 [error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
 [debug] [2026-02-03T04:35:51.545Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
 [debug] [2026-02-03T04:35:51.545Z] > authorizing via signed-in user (gooday6983@gmail.com)
+[debug] [2026-02-05T05:12:34.178Z] ----------------------------------------------------------------------
+[debug] [2026-02-05T05:12:34.180Z] Command:       /Users/ijin-u/.local/share/mise/installs/node/24.13.0/bin/node /Users/ijin-u/.local/share/mise/installs/node/24.13.0/bin/firebase init functions --project marlang-web-0
+[debug] [2026-02-05T05:12:34.180Z] CLI Version:   15.5.1
+[debug] [2026-02-05T05:12:34.180Z] Platform:      darwin
+[debug] [2026-02-05T05:12:34.180Z] Node Version:  v24.13.0
+[debug] [2026-02-05T05:12:34.180Z] Time:          Thu Feb 05 2026 14:12:34 GMT+0900 (Korean Standard Time)
+[debug] [2026-02-05T05:12:34.180Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/ijin-u/workspace_p/marlang-web
+
+Before we get started, keep in mind:
+
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-02-05T05:12:34.746Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-05T05:12:34.746Z] > authorizing via signed-in user (jinwoo.lee@souluniverse.com)
+[debug] [2026-02-05T05:12:34.747Z] Checked if tokens are valid: false, expires at: 1770257791156
+[debug] [2026-02-05T05:12:34.747Z] Checked if tokens are valid: false, expires at: 1770257791156
+[debug] [2026-02-05T05:12:34.747Z] > refreshing access token with scopes: []
+[debug] [2026-02-05T05:12:34.747Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-05T05:12:34.747Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-05T05:12:35.002Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-05T05:12:35.002Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-05T05:12:35.012Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/marlang-web-0 [none]
+[debug] [2026-02-05T05:12:35.430Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/marlang-web-0 403
+[debug] [2026-02-05T05:12:35.430Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/marlang-web-0 {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-05T05:12:35.431Z] Request to https://firebase.googleapis.com/v1beta1/projects/marlang-web-0 had HTTP Error: 403, The caller does not have permission
+[debug] [2026-02-05T05:12:35.431Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/marlang-web-0 had HTTP Error: 403, The caller does not have permission
+    at responseToError (/Users/ijin-u/.local/share/mise/installs/node/24.13.0/lib/node_modules/firebase-tools/lib/responseToError.js:53:12)
+    at RetryOperation._fn (/Users/ijin-u/.local/share/mise/installs/node/24.13.0/lib/node_modules/firebase-tools/lib/apiv2.js:330:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+[error] 
+[error] Error: Failed to get Firebase project marlang-web-0. Please make sure the project exists and your account has permission to access it.
