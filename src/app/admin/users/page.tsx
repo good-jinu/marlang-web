@@ -8,7 +8,7 @@ import { db } from "@/lib/firebase/config";
 interface AdminUser {
 	uid: string;
 	email: string;
-	createdAt: { toDate: () => Date }; // Firestore timestamp
+	createdAt: string; // Serialized as an ISO string
 	addedBy: string;
 }
 
@@ -212,7 +212,7 @@ export default function AdminUsersPage() {
 									<p className="font-medium text-gray-900">{admin.email}</p>
 									<p className="text-xs text-gray-500">
 										Added:{" "}
-										{admin.createdAt?.toDate?.()?.toLocaleDateString() ||
+										{new Date(admin.createdAt).toLocaleDateString() ||
 											"Unknown"}
 									</p>
 								</div>

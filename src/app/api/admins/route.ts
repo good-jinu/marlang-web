@@ -1,8 +1,16 @@
 // /Users/ijin-u/workspace_p/marlang-web/src/app/api/admins/route.ts
 
 import { getAuth } from "firebase-admin/auth";
+import type { Timestamp } from "firebase-admin/firestore";
 import type { NextRequest } from "next/server";
 import { adminDb } from "@/lib/firebase/admin";
+
+interface AdminData {
+	uid: string;
+	email: string;
+	addedBy: string;
+	createdAt: string; // Serialized as an ISO string
+}
 
 export async function GET(request: NextRequest) {
 	try {
@@ -25,12 +33,19 @@ export async function GET(request: NextRequest) {
 
 		// Get all users with admin claims from the admins collection
 		const adminsCollection = await adminDb.collection("admins").get();
-		const admins: { uid: string; [key: string]: unknown }[] = [];
+		const admins: AdminData[] = [];
 
 		adminsCollection.forEach((doc) => {
+			const data = doc.data();
+			const createdAt = (data.createdAt as Timestamp)
+				?.toDate?.()
+				?.toISOString();
+
 			admins.push({
 				uid: doc.id,
-				...doc.data(),
+				email: data.email,
+				addedBy: data.addedBy,
+				createdAt: createdAt || new Date().toISOString(), // Fallback to current time
 			});
 		});
 
