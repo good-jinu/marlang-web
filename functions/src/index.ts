@@ -182,7 +182,7 @@ export const listAdmins = onRequest(async (req, res) => {
 
 		// Get all users with admin claims
 		const adminsCollection = await getFirestore().collection("admins").get();
-		const admins = [];
+		const admins: { uid: string; [key: string]: unknown }[] = [];
 
 		adminsCollection.forEach((doc) => {
 			admins.push({

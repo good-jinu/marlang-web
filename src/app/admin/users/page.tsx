@@ -12,6 +12,11 @@ interface AdminUser {
 	addedBy: string;
 }
 
+interface TargetUser {
+	id: string;
+	[key: string]: any;
+}
+
 export default function AdminUsersPage() {
 	const [admins, setAdmins] = useState<AdminUser[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -69,19 +74,19 @@ export default function AdminUsersPage() {
 
 			// First, find the user by email
 			const usersSnapshot = await getDocs(collection(db, "users"));
-			let targetUser: { id: string; [key: string]: unknown } | null = null;
+			const targetUserDoc = usersSnapshot.docs.find(
+				(doc) => doc.data().email === newAdminEmail,
+			);
 
-			usersSnapshot.forEach((doc) => {
-				const userData = doc.data();
-				if (userData.email === newAdminEmail) {
-					targetUser = { id: doc.id, ...userData };
-				}
-			});
-
-			if (!targetUser) {
+			if (!targetUserDoc) {
 				setError("User not found with this email");
 				return;
 			}
+
+			const targetUser: TargetUser = {
+				id: targetUserDoc.id,
+				...targetUserDoc.data(),
+			};
 
 			// Call the Cloud Function to set admin claim
 			const response = await fetch("/api/set-admin", {
