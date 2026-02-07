@@ -4,6 +4,8 @@ import { adminDb } from "@/lib/firebase/admin";
 
 interface PostData {
 	id: string;
+	title: string;
+	slug: string;
 	content: string;
 	author: string;
 	publishedAt: string;
@@ -28,6 +30,8 @@ async function getPosts(): Promise<PostData[]> {
 		const data = doc.data();
 		return {
 			id: doc.id,
+			title: data.title || "",
+			slug: data.slug || "",
 			content: data.content || "",
 			author: data.author || "Marlang",
 			publishedAt: (data.publishedAt as Timestamp).toDate().toISOString(),

@@ -1,8 +1,24 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	where,
+} from "firebase/firestore";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/firebase/config";
 
 async function getPost(slug: string) {
+	// 1. Try direct ID lookup (Optimized for new posts)
+	const docRef = doc(db, "posts", slug);
+	const docSnap = await getDoc(docRef);
+
+	if (docSnap.exists()) {
+		return docSnap.data();
+	}
+
+	// 2. Fallback to query (Compatibility for old posts)
 	const q = query(collection(db, "posts"), where("slug", "==", slug));
 	const querySnapshot = await getDocs(q);
 
@@ -10,16 +26,16 @@ async function getPost(slug: string) {
 		notFound();
 	}
 
-	const post = querySnapshot.docs[0].data();
-	return post;
+	return querySnapshot.docs[0].data();
 }
 
 export default async function PostPage({
 	params,
 }: {
-	params: { slug: string };
+	params: Promise<{ slug: string }>;
 }) {
-	const post = await getPost(params.slug);
+	const { slug } = await params;
+	const post = await getPost(slug);
 
 	return (
 		<main className="min-h-screen bg-white">

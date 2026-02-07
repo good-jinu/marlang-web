@@ -1,5 +1,6 @@
 import * as crypto from "node:crypto";
 import { VertexAI } from "@google-cloud/vertexai";
+import parser from "cron-parser";
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
@@ -8,6 +9,18 @@ import { onRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
 initializeApp();
+
+function slugify(text: string): string {
+	return text
+		.toString()
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-") // Replace spaces with -
+		.replace(/[^\w-]+/g, "") // Remove all non-word chars
+		.replace(/--+/g, "-") // Replace multiple - with single -
+		.replace(/^-+/, "") // Trim - from start of text
+		.replace(/-+$/, ""); // Trim - from end of text
+}
 
 // 1. Define Interfaces for Type Safety
 interface AgentConfig {
@@ -38,12 +51,15 @@ interface AgentConfig {
 }
 
 interface GeneratedPostResponse {
+	title: string;
 	content: string; // The Caption
 	tags: string[];
 	thumbnailIdeas: string[]; // Descriptions of what images should be
 }
 
 interface BlogPost {
+	title: string;
+	slug: string;
 	content: string;
 	thumbnails: string[];
 	status: "published" | "draft";
@@ -200,7 +216,7 @@ export const listAdmins = onRequest(async (req, res) => {
 
 export const generateDailyBlogPost = onSchedule(
 	{
-		schedule: "0 9 * * *",
+		schedule: "0 * * * *",
 		timeZone: "UTC",
 		memory: "1GiB", // Increased for image processing
 		region: "asia-east1",
@@ -222,6 +238,35 @@ export const generateDailyBlogPost = onSchedule(
 
 		if (!agent.scheduledPosting?.enabled) {
 			console.log("Scheduled posting is disabled");
+			return;
+		}
+
+		// 1.1 Check if it's time to run based on the configured schedule
+		try {
+			const lastRun = agent.scheduledPosting.lastRun?.toDate() || new Date(0);
+			const now = new Date();
+			const schedule = agent.scheduledPosting.schedule || "0 9 * * *";
+
+			const interval = parser.parse(schedule, {
+				currentDate: lastRun,
+				tz: "UTC",
+			});
+
+			const nextExecution = interval.next().toDate();
+
+			if (nextExecution > now) {
+				console.log(
+					`Not time to run yet. Configured schedule: ${schedule}. Last run: ${lastRun.toISOString()}. Next planned execution: ${nextExecution.toISOString()}`,
+				);
+				return;
+			}
+			console.log(
+				`Time to run! Configured schedule: ${schedule}. Next execution was due at: ${nextExecution.toISOString()}`,
+			);
+		} catch (error) {
+			console.error("Error parsing cron schedule or checking last run:", error);
+			// Fallback: if cron is invalid, we might want to skip to avoid spamming or just use default.
+			// For now, let's just log and return to be safe.
 			return;
 		}
 
@@ -255,13 +300,15 @@ export const generateDailyBlogPost = onSchedule(
     Task: Create a new Instagram-style post for today.
 
     Requirements:
-    1. Write a compelling CAPTION (max 500 characters, includes emojis).
-    2. Provide ${thumbCount} specific image descriptions for the carousel.
+    1. Write a compelling TITLE for the post (max 60 characters).
+    2. Write a compelling CAPTION (max 500 characters, includes emojis).
+    3. Provide ${thumbCount} specific image descriptions for the carousel.
        Style: ${thumbStyle}.
        Prompt Template: ${agent.thumbnailGenConfig?.promptTemplate || "An image of {agent_name} {activity}"}
-    3. Suggest 5 relevant hashtags.
+    4. Suggest 5 relevant hashtags.
 
     Format your response EXACTLY as a JSON object with these keys:
+    "title" (the title string),
     "content" (the caption string),
     "tags" (array of strings),
     "thumbnailIdeas" (array of strings describing each image).
@@ -320,7 +367,13 @@ export const generateDailyBlogPost = onSchedule(
 				return;
 			}
 
+			const baseSlug = slugify(postData.title);
+			const uniqueId = crypto.randomBytes(3).toString("hex");
+			const finalSlug = `${baseSlug}-${uniqueId}`;
+
 			const newPost: BlogPost = {
+				title: postData.title,
+				slug: finalSlug,
 				content: postData.content,
 				thumbnails: imageUrls,
 				status: "published",
@@ -338,7 +391,8 @@ export const generateDailyBlogPost = onSchedule(
 				},
 			};
 
-			await db.collection("posts").add(newPost);
+			// Use the unique slug as the document ID for faster lookups
+			await db.collection("posts").doc(finalSlug).set(newPost);
 
 			// Update agent's last run
 			await db.collection("aiAgents").doc("main").update({
