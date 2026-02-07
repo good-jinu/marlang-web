@@ -1,39 +1,44 @@
-import {
-	collection,
-	getDocs,
-	limit,
-	orderBy,
-	query,
-	type Timestamp,
-	where,
-} from "firebase/firestore";
+import { type Timestamp } from "firebase-admin/firestore";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import CatCharacter from "@/components/CatCharacter";
 import Post from "@/components/post"; // Import the Post component
-import { db } from "@/lib/firebase/config";
+import { adminDb } from "@/lib/firebase/admin";
 
 interface PostData {
 	id: string;
 	title: string;
 	content: string;
 	author: string;
-	publishedAt: Timestamp;
+	publishedAt: string; // Changed to string to pass from server to client
 	slug: string;
 }
 
-async function getPosts() {
-	const q = query(
-		collection(db, "posts"),
-		where("status", "==", "published"),
-		orderBy("publishedAt", "desc"),
-		limit(12),
-	);
-	const querySnapshot = await getDocs(q);
-	const posts = querySnapshot.docs.map((doc) => ({
-		id: doc.id,
-		...doc.data(),
-	})) as PostData[];
+async function getPosts(): Promise<PostData[]> {
+	const postsRef = adminDb.collection("posts");
+	const q = postsRef
+		.where("status", "==", "published")
+		.orderBy("publishedAt", "desc")
+		.limit(12);
+
+	const querySnapshot = await q.get();
+
+	if (querySnapshot.empty) {
+		return [];
+	}
+
+	const posts = querySnapshot.docs.map((doc) => {
+		const data = doc.data();
+		return {
+			id: doc.id,
+			title: data.title || "",
+			content: data.content || "",
+			author: data.author || "Anonymous",
+			publishedAt: (data.publishedAt as Timestamp).toDate().toISOString(), // Convert to ISO string
+			slug: data.slug || doc.id,
+		};
+	});
+
 	return posts;
 }
 
@@ -74,8 +79,8 @@ export default async function Home() {
 										content={post.content} // Use content instead of excerpt
 										author={post.author}
 										date={new Date(
-											post.publishedAt.seconds * 1000,
-										).toLocaleDateString()}
+											post.publishedAt,
+										).toLocaleDateString()} // Use the ISO string directly
 									/>
 								</Link>
 							</motion.div>

@@ -16,7 +16,7 @@ service cloud.firestore {
     
     // Admin whitelist - only accessible by self or other admins (if needed)
     match /admins/{email} {
-      allow read: if true; // Needed for client side check
+      allow read: if request.auth != null && request.auth.token.email == email;
       allow write: if false; // Only manageable via Firebase Console for safety
     }
   }
