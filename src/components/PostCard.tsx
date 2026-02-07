@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 interface PostCardProps {
 	id: string;
+	title: string;
+	slug: string;
 	content: string;
 	author: string;
 	publishedAt: string;
@@ -13,6 +16,8 @@ interface PostCardProps {
 }
 
 export default function PostCard({
+	title,
+	slug,
 	content,
 	author,
 	publishedAt,
@@ -45,7 +50,16 @@ export default function PostCard({
 							})}
 						</span>
 					</div>
-					<p className="text-gray-700 leading-relaxed text-base">{content}</p>
+					{title && (
+						<Link href={`/post/${slug}`}>
+							<h4 className="font-black text-xl text-gray-900 mb-2 hover:text-indigo-600 transition-colors">
+								{title}
+							</h4>
+						</Link>
+					)}
+					<p className="text-gray-700 leading-relaxed text-base line-clamp-3">
+						{content}
+					</p>
 					{thumbnails.length > 0 && (
 						<div className="mt-4 grid grid-cols-2 gap-3">
 							{thumbnails.map((thumb) => (
