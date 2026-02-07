@@ -1,17 +1,16 @@
-import { type Timestamp } from "firebase-admin/firestore";
-import { motion } from "framer-motion";
+import type { Timestamp } from "firebase-admin/firestore";
+import { Bot, Sparkles } from "lucide-react";
 import Link from "next/link";
-import CatCharacter from "@/components/CatCharacter";
-import Post from "@/components/post"; // Import the Post component
+import FeedPost from "@/components/FeedPost";
 import { adminDb } from "@/lib/firebase/admin";
 
 interface PostData {
 	id: string;
-	title: string;
 	content: string;
 	author: string;
-	publishedAt: string; // Changed to string to pass from server to client
-	slug: string;
+	publishedAt: string;
+	thumbnails: string[];
+	generatedByAI: boolean;
 }
 
 async function getPosts(): Promise<PostData[]> {
@@ -19,7 +18,7 @@ async function getPosts(): Promise<PostData[]> {
 	const q = postsRef
 		.where("status", "==", "published")
 		.orderBy("publishedAt", "desc")
-		.limit(12);
+		.limit(20);
 
 	const querySnapshot = await q.get();
 
@@ -31,11 +30,11 @@ async function getPosts(): Promise<PostData[]> {
 		const data = doc.data();
 		return {
 			id: doc.id,
-			title: data.title || "",
 			content: data.content || "",
-			author: data.author || "Anonymous",
-			publishedAt: (data.publishedAt as Timestamp).toDate().toISOString(), // Convert to ISO string
-			slug: data.slug || doc.id,
+			author: data.author || "Marlang",
+			publishedAt: (data.publishedAt as Timestamp).toDate().toISOString(),
+			thumbnails: data.thumbnails || (data.thumbnail ? [data.thumbnail] : []),
+			generatedByAI: !!data.generatedByAI,
 		};
 	});
 
@@ -46,60 +45,83 @@ export default async function Home() {
 	const posts = await getPosts();
 
 	return (
-		<main className="min-h-screen bg-white">
-			{/* Hero Section with Cat */}
-			<section className="pt-8 bg-slate-50 border-b border-gray-100">
-				<CatCharacter />
-			</section>
-
-			{/* Blog Grid */}
-			<section className="max-w-6xl mx-auto px-4 py-16">
-				<div className="flex items-center justify-between mb-12 border-b border-gray-100 pb-4">
-					<h3 className="text-xl font-bold text-gray-900">
-						Latest Discoveries
-					</h3>
-					<div className="flex gap-4 text-sm text-gray-500 font-medium">
-						<span>{posts.length} Posts</span>
+		<main className="min-h-screen bg-slate-50/50">
+			{/* Header Navigation */}
+			<nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3">
+				<div className="max-w-xl mx-auto flex items-center justify-between">
+					<Link href="/" className="flex items-center gap-2">
+						<div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-lg">
+							🐾
+						</div>
+						<h1 className="text-xl font-black text-gray-900 tracking-tight">
+							Marlang
+						</h1>
+					</Link>
+					<div className="flex items-center gap-5 text-gray-700">
+						<Link
+							href="/admin"
+							className="text-sm font-bold hover:text-indigo-600 transition-colors"
+						>
+							Admin
+						</Link>
+						<div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm border border-gray-100">
+							😻
+						</div>
 					</div>
 				</div>
+			</nav>
 
+			{/* Feed Section */}
+			<section className="max-w-xl mx-auto px-4 py-12">
 				{posts.length > 0 ? (
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{posts.map((post, index) => (
-							<motion.div
+					<div className="space-y-4">
+						{posts.map((post) => (
+							<FeedPost
 								key={post.id}
-								initial={{ opacity: 0, y: 20 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								transition={{ delay: index * 0.1 }}
-								viewport={{ once: true }}
-							>
-								<Link href={`/post/${post.slug}`}>
-									<Post
-										title={post.title}
-										content={post.content} // Use content instead of excerpt
-										author={post.author}
-										date={new Date(
-											post.publishedAt,
-										).toLocaleDateString()} // Use the ISO string directly
-									/>
-								</Link>
-							</motion.div>
+								author={post.author}
+								content={post.content}
+								thumbnails={post.thumbnails}
+								generatedByAI={post.generatedByAI}
+								date={new Date(post.publishedAt).toLocaleDateString("en-US", {
+									month: "short",
+									day: "numeric",
+								})}
+							/>
 						))}
+
+						<div className="py-12 text-center text-gray-400 space-y-2">
+							<Sparkles className="w-5 h-5 mx-auto opacity-20" />
+							<p className="text-xs font-bold uppercase tracking-widest italic">
+								You've reached the end of the yarn
+							</p>
+						</div>
 					</div>
 				) : (
-					<div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-gray-100">
-						<div className="mb-4 text-4xl">🐾</div>
-						<h4 className="text-gray-900 font-bold mb-2">No posts yet</h4>
-						<p className="text-gray-500">
-							Marlang is still thinking about what to write.
+					<div className="text-center py-32 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm">
+						<div className="mb-6 text-5xl">🧶</div>
+						<h4 className="text-gray-900 font-black text-lg mb-2">
+							Feed is empty
+						</h4>
+						<p className="text-gray-400 text-sm font-medium">
+							Marlang is busy chasing lasers. Check back soon!
 						</p>
 					</div>
 				)}
 			</section>
 
 			{/* Footer */}
-			<footer className="py-12 border-t border-gray-100 text-center text-gray-400 text-sm">
-				<p>© 2026 AI Cat Blog. Powered by Meow-gical Intelligence.</p>
+			<footer className="py-12 bg-white border-t border-gray-100 text-center text-gray-400">
+				<div className="max-w-xl mx-auto px-4 space-y-4">
+					<div className="flex items-center justify-center gap-2">
+						<Bot size={16} className="text-indigo-400" />
+						<p className="text-[10px] font-bold uppercase tracking-widest">
+							Powered by Meow-gical Intelligence
+						</p>
+					</div>
+					<p className="text-[10px]">
+						&copy; 2026 Marlang Web. All rights reserved.
+					</p>
+				</div>
 			</footer>
 		</main>
 	);

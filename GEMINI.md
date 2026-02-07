@@ -102,7 +102,7 @@ export async function-save-email(prevState: any, formData: FormData) {
 A critical function of the AI is to continuously monitor for and automatically resolve errors.
 
 * **Post-Modification Checks:** After every code modification, the AI will:
-  * Run `npm run lint -- --fix` to catch and fix linting issues.
+  * Run `npm run check` to catch and fix linting issues.
   * Monitor the IDE's diagnostics (problem pane).
   * Check the output of the running dev server for compilation and runtime errors.
 * **Automatic Error Correction:** The AI will attempt to fix common Next.js and React errors.
@@ -145,6 +145,6 @@ The AI's workflow is iterative, transparent, and responsive to user input.
   1. **Important:** The AI will **not** start the dev server (`next dev`), as it is already managed by Firebase Studio.
   2. **Code Change:** AI applies a code modification.
   3. **Dependency Check:** If a new package is needed, AI runs `npm install`.
-  4. **Compile & Analyze:** AI runs `npm run lint` and monitors the dev server.
+  4. **Compile & Analyze:** AI runs `npm run check` and monitors the dev server.
   5. **Preview Check:** AI observes the browser preview for visual and runtime errors.
   6. **Remediation/Report:** If errors are found, AI attempts automatic fixes. If unsuccessful, it reports details to the user.

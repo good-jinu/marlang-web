@@ -9,6 +9,8 @@ import {
 	query,
 	type Timestamp,
 } from "firebase/firestore";
+import { Edit, Image as ImageIcon, Trash2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { db } from "@/lib/firebase/config";
@@ -16,11 +18,14 @@ import { db } from "@/lib/firebase/config";
 interface Post {
 	id: string;
 	title: string;
+	content: string;
 	status: string;
 	publishedAt: Timestamp;
 	createdAt: Timestamp;
 	slug: string;
 	generatedByAI: boolean;
+	thumbnails?: string[];
+	thumbnail?: string; // legacy
 }
 
 export default function PostsManagement() {
@@ -62,157 +67,187 @@ export default function PostsManagement() {
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-8">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold text-gray-900">Posts Management</h1>
-					<p className="text-gray-500 text-sm">
-						Manage your blog content and drafts.
+					<h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+						Posts
+					</h1>
+					<p className="text-gray-500 text-sm mt-1">
+						Showing all {posts.length} moments.
 					</p>
 				</div>
 				<Link
 					href="/admin/posts/new"
-					className="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100"
+					className="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 flex items-center gap-2"
 				>
-					+ New Post
+					<span>+ New Moment</span>
 				</Link>
 			</div>
 
 			<div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
 				<div className="overflow-x-auto">
 					<table className="w-full text-left">
-						<thead className="bg-gray-50 border-b border-gray-100">
+						<thead className="bg-gray-50/50 border-b border-gray-100">
 							<tr>
-								<th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-									Title
+								<th className="px-8 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+									Post
 								</th>
-								<th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+								<th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
 									Status
 								</th>
-								<th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-									Published
+								<th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+									Date
 								</th>
-								<th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-									AI Generated
+								<th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+									Source
 								</th>
-								<th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+								<th className="px-8 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">
 									Actions
 								</th>
 							</tr>
 						</thead>
-						<tbody className="divide-y divide-gray-100">
+						<tbody className="divide-y divide-gray-50">
 							{loading ? (
 								[1, 2, 3].map((i) => (
 									<tr key={i} className="animate-pulse">
-										<td className="px-6 py-4">
-											<div className="h-4 bg-gray-100 rounded w-48"></div>
+										<td className="px-8 py-6">
+											<div className="flex items-center gap-4">
+												<div className="w-12 h-12 bg-gray-100 rounded-lg"></div>
+												<div className="space-y-2">
+													<div className="h-4 bg-gray-100 rounded w-48"></div>
+													<div className="h-3 bg-gray-50 rounded w-24"></div>
+												</div>
+											</div>
 										</td>
-										<td className="px-6 py-4">
+										<td className="px-6 py-6">
 											<div className="h-4 bg-gray-100 rounded w-16"></div>
 										</td>
-										<td className="px-6 py-4">
+										<td className="px-6 py-6">
 											<div className="h-4 bg-gray-100 rounded w-24"></div>
 										</td>
-										<td className="px-6 py-4">
+										<td className="px-6 py-6">
 											<div className="h-4 bg-gray-100 rounded w-10"></div>
 										</td>
-										<td className="px-6 py-4">
-											<div className="h-4 bg-gray-100 rounded w-12"></div>
+										<td className="px-8 py-6 text-right">
+											<div className="h-4 bg-gray-100 rounded w-20 ml-auto"></div>
 										</td>
 									</tr>
 								))
 							) : posts.length > 0 ? (
-								posts.map((post) => (
-									<tr
-										key={post.id}
-										className="hover:bg-gray-50 transition-colors"
-									>
-										<td className="px-6 py-4">
-											<p className="text-sm font-bold text-gray-900 line-clamp-1">
-												{post.title}
-											</p>
-											<p className="text-[10px] text-gray-400 font-mono tracking-tighter">
-												/{post.slug}
-											</p>
-										</td>
-										<td className="px-6 py-4">
-											<span
-												className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
-													post.status === "published"
-														? "bg-green-50 text-green-600"
-														: "bg-yellow-50 text-yellow-600"
-												}`}
-											>
-												{post.status}
-											</span>
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-500">
-											{post.publishedAt?.toDate().toLocaleDateString() ||
-												"Not published"}
-										</td>
-										<td className="px-6 py-4">
-											{post.generatedByAI ? (
-												<span className="text-xl" title="AI Generated">
-													🤖
-												</span>
-											) : (
-												<span className="text-xl" title="Manual Post">
-													✍️
-												</span>
-											)}
-										</td>
-										<td className="px-6 py-4">
-											<div className="flex items-center gap-3">
-												<Link
-													href={`/admin/posts/edit/${post.id}`}
-													className="text-gray-400 hover:text-indigo-600 transition-colors"
+								posts.map((post) => {
+									const mainThumbnail = post.thumbnails?.[0] || post.thumbnail;
+									return (
+										<tr
+											key={post.id}
+											className="hover:bg-gray-50/50 transition-colors group"
+										>
+											<td className="px-8 py-5">
+												<div className="flex items-center gap-4">
+													<div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 relative">
+														{mainThumbnail ? (
+															<Image
+																src={mainThumbnail}
+																alt={post.title || "Post thumbnail"}
+																fill
+																className="object-cover"
+															/>
+														) : (
+															<div className="w-full h-full flex items-center justify-center text-gray-300">
+																<ImageIcon size={20} />
+															</div>
+														)}
+														{post.thumbnails && post.thumbnails.length > 1 && (
+															<div className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 text-white text-[8px] font-bold rounded flex items-center justify-center">
+																{post.thumbnails.length}
+															</div>
+														)}
+													</div>
+													<div>
+														<p className="text-sm font-bold text-gray-900 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+															{post.content || post.title || "No content"}
+														</p>
+														<p className="text-[10px] text-gray-400 mt-0.5 font-medium">
+															{post.slug
+																? `/${post.slug}`
+																: `ID: ${post.id.slice(0, 8)}`}
+														</p>
+													</div>
+												</div>
+											</td>
+											<td className="px-6 py-5">
+												<span
+													className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md tracking-tighter ${
+														post.status === "published"
+															? "bg-emerald-50 text-emerald-600"
+															: "bg-amber-50 text-amber-600"
+													}`}
 												>
-													<svg
-														className="w-5 h-5"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
+													{post.status}
+												</span>
+											</td>
+											<td className="px-6 py-5 text-xs text-gray-500 font-medium">
+												{post.publishedAt
+													?.toDate()
+													.toLocaleDateString("en-US", {
+														month: "short",
+														day: "numeric",
+														year: "numeric",
+													}) || "Draft"}
+											</td>
+											<td className="px-6 py-5">
+												{post.generatedByAI ? (
+													<span
+														className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded"
+														title="AI Generated"
 													>
-														<title>Edit post</title>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth="2"
-															d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5M18.364 5.364a2.5 2.5 0 113.536 3.536L12.5 21H9v-3.536L18.364 5.364z"
-														/>
-													</svg>
-												</Link>
-												<button
-													type="button"
-													onClick={() => handleDelete(post.id)}
-													className="text-gray-400 hover:text-red-600 transition-colors"
-												>
-													<svg
-														className="w-5 h-5"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
+														🤖 AI
+													</span>
+												) : (
+													<span
+														className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded"
+														title="Manual Post"
 													>
-														<title>Delete post</title>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth="2"
-															d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-														/>
-													</svg>
-												</button>
-											</div>
-										</td>
-									</tr>
-								))
+														👤 SELF
+													</span>
+												)}
+											</td>
+											<td className="px-8 py-5 text-right">
+												<div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+													<Link
+														href={`/admin/posts/edit/${post.id}`}
+														className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+														title="Edit"
+													>
+														<Edit size={18} />
+													</Link>
+													<button
+														type="button"
+														onClick={() => handleDelete(post.id)}
+														className="p-2 text-gray-400 hover:text-rose-600 hover:bg-white rounded-lg transition-all"
+														title="Delete"
+													>
+														<Trash2 size={18} />
+													</button>
+												</div>
+											</td>
+										</tr>
+									);
+								})
 							) : (
 								<tr>
-									<td
-										colSpan={5}
-										className="px-6 py-12 text-center text-gray-400"
-									>
-										No posts yet. Start by creating one!
+									<td colSpan={5} className="px-6 py-20 text-center">
+										<div className="flex flex-col items-center gap-2">
+											<div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-2">
+												<ImageIcon size={24} />
+											</div>
+											<h3 className="text-sm font-bold text-gray-900">
+												No posts yet
+											</h3>
+											<p className="text-xs text-gray-400">
+												Share your first moment with the world.
+											</p>
+										</div>
 									</td>
 								</tr>
 							)}
