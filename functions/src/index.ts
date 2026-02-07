@@ -10,6 +10,18 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 
 initializeApp();
 
+function slugify(text: string): string {
+	return text
+		.toString()
+		.toLowerCase()
+		.trim()
+		.replace(/\s+/g, "-") // Replace spaces with -
+		.replace(/[^\w-]+/g, "") // Remove all non-word chars
+		.replace(/--+/g, "-") // Replace multiple - with single -
+		.replace(/^-+/, "") // Trim - from start of text
+		.replace(/-+$/, ""); // Trim - from end of text
+}
+
 // 1. Define Interfaces for Type Safety
 interface AgentConfig {
 	name: string;
@@ -40,7 +52,6 @@ interface AgentConfig {
 
 interface GeneratedPostResponse {
 	title: string;
-	slug: string;
 	content: string; // The Caption
 	tags: string[];
 	thumbnailIdeas: string[]; // Descriptions of what images should be
@@ -290,16 +301,14 @@ export const generateDailyBlogPost = onSchedule(
 
     Requirements:
     1. Write a compelling TITLE for the post (max 60 characters).
-    2. Create a URL-friendly SLUG based on the title (lowercase, hyphens, no special characters).
-    3. Write a compelling CAPTION (max 500 characters, includes emojis).
-    4. Provide ${thumbCount} specific image descriptions for the carousel.
+    2. Write a compelling CAPTION (max 500 characters, includes emojis).
+    3. Provide ${thumbCount} specific image descriptions for the carousel.
        Style: ${thumbStyle}.
        Prompt Template: ${agent.thumbnailGenConfig?.promptTemplate || "An image of {agent_name} {activity}"}
-    5. Suggest 5 relevant hashtags.
+    4. Suggest 5 relevant hashtags.
 
     Format your response EXACTLY as a JSON object with these keys:
     "title" (the title string),
-    "slug" (the slug string),
     "content" (the caption string),
     "tags" (array of strings),
     "thumbnailIdeas" (array of strings describing each image).
@@ -358,8 +367,9 @@ export const generateDailyBlogPost = onSchedule(
 				return;
 			}
 
+			const baseSlug = slugify(postData.title);
 			const uniqueId = crypto.randomBytes(3).toString("hex");
-			const finalSlug = `${postData.slug}-${uniqueId}`;
+			const finalSlug = `${baseSlug}-${uniqueId}`;
 
 			const newPost: BlogPost = {
 				title: postData.title,
