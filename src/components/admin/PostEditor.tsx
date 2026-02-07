@@ -3,6 +3,7 @@
 import {
 	collection,
 	doc,
+	type FieldValue,
 	getDoc,
 	serverTimestamp,
 	setDoc,
@@ -96,8 +97,18 @@ export default function PostEditor() {
 		setSaving(true);
 
 		// Simplified schema: content and thumbnails are primary
-		// biome-ignore lint/correctness/noExplicitAny: post data
-		const postData: any = {
+		const postData: {
+			content: string;
+			thumbnails: string[];
+			status: string;
+			tags: string[];
+			updatedAt: FieldValue;
+			author: string;
+			authorId: string;
+			metadata: { imageCount: number };
+			title?: string;
+			slug?: string;
+		} = {
 			content,
 			thumbnails,
 			status,

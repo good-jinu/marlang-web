@@ -1,11 +1,11 @@
 import * as crypto from "node:crypto";
 import { VertexAI } from "@google-cloud/vertexai";
 import { initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import { getAuth } from "firebase-admin/auth";
-import { onSchedule } from "firebase-functions/v2/scheduler";
 import { onRequest } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 initializeApp();
 
@@ -63,132 +63,139 @@ interface BlogPost {
 
 // Admin management functions
 export const setAdminClaim = onRequest(async (req, res) => {
-  if (req.method !== 'POST') {
-    res.status(405).send('Method not allowed');
-    return;
-  }
+	if (req.method !== "POST") {
+		res.status(405).send("Method not allowed");
+		return;
+	}
 
-  // Verify the request comes from an authenticated admin
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).send('Unauthorized');
-    return;
-  }
+	// Verify the request comes from an authenticated admin
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		res.status(401).send("Unauthorized");
+		return;
+	}
 
-  try {
-    const token = authHeader.split('Bearer ')[1];
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    // Only allow if the user is already an admin
-    if (!decodedToken.admin) {
-      res.status(403).send('Forbidden: Only admins can set admin claims');
-      return;
-    }
+	try {
+		const token = authHeader.split("Bearer ")[1];
+		const decodedToken = await getAuth().verifyIdToken(token);
 
-    const { uid, email } = req.body;
-    if (!uid) {
-      res.status(400).send('Missing UID in request body');
-      return;
-    }
+		// Only allow if the user is already an admin
+		if (!decodedToken.admin) {
+			res.status(403).send("Forbidden: Only admins can set admin claims");
+			return;
+		}
 
-    // Set custom claim for admin
-    await getAuth().setCustomUserClaims(uid, { admin: true });
+		const { uid, email } = req.body;
+		if (!uid) {
+			res.status(400).send("Missing UID in request body");
+			return;
+		}
 
-    // Add user to admins collection for reference
-    await getFirestore().collection('admins').doc(uid).set({
-      email: email || 'unknown',
-      createdAt: Timestamp.now(),
-      addedBy: decodedToken.uid
-    });
+		// Set custom claim for admin
+		await getAuth().setCustomUserClaims(uid, { admin: true });
 
-    res.status(200).send({ success: true, message: `Admin claim set for user ${uid}` });
-  } catch (error) {
-    console.error('Error setting admin claim:', error);
-    res.status(500).send({ error: 'Internal server error' });
-  }
+		// Add user to admins collection for reference
+		await getFirestore()
+			.collection("admins")
+			.doc(uid)
+			.set({
+				email: email || "unknown",
+				createdAt: Timestamp.now(),
+				addedBy: decodedToken.uid,
+			});
+
+		res
+			.status(200)
+			.send({ success: true, message: `Admin claim set for user ${uid}` });
+	} catch (error) {
+		console.error("Error setting admin claim:", error);
+		res.status(500).send({ error: "Internal server error" });
+	}
 });
 
 export const removeAdminClaim = onRequest(async (req, res) => {
-  if (req.method !== 'DELETE') {
-    res.status(405).send('Method not allowed');
-    return;
-  }
+	if (req.method !== "DELETE") {
+		res.status(405).send("Method not allowed");
+		return;
+	}
 
-  // Verify the request comes from an authenticated admin
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).send('Unauthorized');
-    return;
-  }
+	// Verify the request comes from an authenticated admin
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		res.status(401).send("Unauthorized");
+		return;
+	}
 
-  try {
-    const token = authHeader.split('Bearer ')[1];
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    // Only allow if the user is already an admin
-    if (!decodedToken.admin) {
-      res.status(403).send('Forbidden: Only admins can remove admin claims');
-      return;
-    }
+	try {
+		const token = authHeader.split("Bearer ")[1];
+		const decodedToken = await getAuth().verifyIdToken(token);
 
-    const { uid } = req.body;
-    if (!uid) {
-      res.status(400).send('Missing UID in request body');
-      return;
-    }
+		// Only allow if the user is already an admin
+		if (!decodedToken.admin) {
+			res.status(403).send("Forbidden: Only admins can remove admin claims");
+			return;
+		}
 
-    // Remove custom claim for admin
-    await getAuth().setCustomUserClaims(uid, {});
+		const { uid } = req.body;
+		if (!uid) {
+			res.status(400).send("Missing UID in request body");
+			return;
+		}
 
-    // Remove user from admins collection
-    await getFirestore().collection('admins').doc(uid).delete();
+		// Remove custom claim for admin
+		await getAuth().setCustomUserClaims(uid, {});
 
-    res.status(200).send({ success: true, message: `Admin claim removed for user ${uid}` });
-  } catch (error) {
-    console.error('Error removing admin claim:', error);
-    res.status(500).send({ error: 'Internal server error' });
-  }
+		// Remove user from admins collection
+		await getFirestore().collection("admins").doc(uid).delete();
+
+		res
+			.status(200)
+			.send({ success: true, message: `Admin claim removed for user ${uid}` });
+	} catch (error) {
+		console.error("Error removing admin claim:", error);
+		res.status(500).send({ error: "Internal server error" });
+	}
 });
 
 export const listAdmins = onRequest(async (req, res) => {
-  if (req.method !== 'GET') {
-    res.status(405).send('Method not allowed');
-    return;
-  }
+	if (req.method !== "GET") {
+		res.status(405).send("Method not allowed");
+		return;
+	}
 
-  // Verify the request comes from an authenticated admin
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).send('Unauthorized');
-    return;
-  }
+	// Verify the request comes from an authenticated admin
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		res.status(401).send("Unauthorized");
+		return;
+	}
 
-  try {
-    const token = authHeader.split('Bearer ')[1];
-    const decodedToken = await getAuth().verifyIdToken(token);
-    
-    // Only allow if the user is already an admin
-    if (!decodedToken.admin) {
-      res.status(403).send('Forbidden: Only admins can list admins');
-      return;
-    }
+	try {
+		const token = authHeader.split("Bearer ")[1];
+		const decodedToken = await getAuth().verifyIdToken(token);
 
-    // Get all users with admin claims
-    const adminsCollection = await getFirestore().collection('admins').get();
-    const admins = [];
-    
-    adminsCollection.forEach(doc => {
-      admins.push({
-        uid: doc.id,
-        ...doc.data()
-      });
-    });
+		// Only allow if the user is already an admin
+		if (!decodedToken.admin) {
+			res.status(403).send("Forbidden: Only admins can list admins");
+			return;
+		}
 
-    res.status(200).send({ admins });
-  } catch (error) {
-    console.error('Error listing admins:', error);
-    res.status(500).send({ error: 'Internal server error' });
-  }
+		// Get all users with admin claims
+		const adminsCollection = await getFirestore().collection("admins").get();
+		const admins = [];
+
+		adminsCollection.forEach((doc) => {
+			admins.push({
+				uid: doc.id,
+				...doc.data(),
+			});
+		});
+
+		res.status(200).send({ admins });
+	} catch (error) {
+		console.error("Error listing admins:", error);
+		res.status(500).send({ error: "Internal server error" });
+	}
 });
 
 export const generateDailyBlogPost = onSchedule(

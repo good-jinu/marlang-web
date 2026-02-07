@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface PostCardProps {
 	id: string;
@@ -47,11 +48,13 @@ export default function PostCard({
 					<p className="text-gray-700 leading-relaxed text-base">{content}</p>
 					{thumbnails.length > 0 && (
 						<div className="mt-4 grid grid-cols-2 gap-3">
-							{thumbnails.map((thumb, idx) => (
-								<img
-									key={idx}
+							{thumbnails.map((thumb) => (
+								<Image
+									key={thumb}
 									src={thumb}
-									alt={`Post thumbnail ${idx + 1}`}
+									alt="Post thumbnail"
+									width={200}
+									height={150}
 									className="rounded-lg w-full h-48 object-cover border border-gray-200"
 								/>
 							))}
