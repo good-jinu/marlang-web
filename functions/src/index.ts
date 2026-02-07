@@ -3,7 +3,9 @@ import { VertexAI } from "@google-cloud/vertexai";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
+import { getAuth } from "firebase-admin/auth";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest } from "firebase-functions/v2/https";
 
 initializeApp();
 
@@ -58,6 +60,136 @@ interface BlogPost {
 		thumbnailDescriptions: string[];
 	};
 }
+
+// Admin management functions
+export const setAdminClaim = onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method not allowed');
+    return;
+  }
+
+  // Verify the request comes from an authenticated admin
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  try {
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await getAuth().verifyIdToken(token);
+    
+    // Only allow if the user is already an admin
+    if (!decodedToken.admin) {
+      res.status(403).send('Forbidden: Only admins can set admin claims');
+      return;
+    }
+
+    const { uid, email } = req.body;
+    if (!uid) {
+      res.status(400).send('Missing UID in request body');
+      return;
+    }
+
+    // Set custom claim for admin
+    await getAuth().setCustomUserClaims(uid, { admin: true });
+
+    // Add user to admins collection for reference
+    await getFirestore().collection('admins').doc(uid).set({
+      email: email || 'unknown',
+      createdAt: Timestamp.now(),
+      addedBy: decodedToken.uid
+    });
+
+    res.status(200).send({ success: true, message: `Admin claim set for user ${uid}` });
+  } catch (error) {
+    console.error('Error setting admin claim:', error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});
+
+export const removeAdminClaim = onRequest(async (req, res) => {
+  if (req.method !== 'DELETE') {
+    res.status(405).send('Method not allowed');
+    return;
+  }
+
+  // Verify the request comes from an authenticated admin
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  try {
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await getAuth().verifyIdToken(token);
+    
+    // Only allow if the user is already an admin
+    if (!decodedToken.admin) {
+      res.status(403).send('Forbidden: Only admins can remove admin claims');
+      return;
+    }
+
+    const { uid } = req.body;
+    if (!uid) {
+      res.status(400).send('Missing UID in request body');
+      return;
+    }
+
+    // Remove custom claim for admin
+    await getAuth().setCustomUserClaims(uid, {});
+
+    // Remove user from admins collection
+    await getFirestore().collection('admins').doc(uid).delete();
+
+    res.status(200).send({ success: true, message: `Admin claim removed for user ${uid}` });
+  } catch (error) {
+    console.error('Error removing admin claim:', error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});
+
+export const listAdmins = onRequest(async (req, res) => {
+  if (req.method !== 'GET') {
+    res.status(405).send('Method not allowed');
+    return;
+  }
+
+  // Verify the request comes from an authenticated admin
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
+
+  try {
+    const token = authHeader.split('Bearer ')[1];
+    const decodedToken = await getAuth().verifyIdToken(token);
+    
+    // Only allow if the user is already an admin
+    if (!decodedToken.admin) {
+      res.status(403).send('Forbidden: Only admins can list admins');
+      return;
+    }
+
+    // Get all users with admin claims
+    const adminsCollection = await getFirestore().collection('admins').get();
+    const admins = [];
+    
+    adminsCollection.forEach(doc => {
+      admins.push({
+        uid: doc.id,
+        ...doc.data()
+      });
+    });
+
+    res.status(200).send({ admins });
+  } catch (error) {
+    console.error('Error listing admins:', error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+});
 
 export const generateDailyBlogPost = onSchedule(
 	{
@@ -114,19 +246,19 @@ export const generateDailyBlogPost = onSchedule(
     Instructions: ${agent.personality.systemPrompt}
 
     Task: Create a new Instagram-style post for today.
-    
+
     Requirements:
     1. Write a compelling CAPTION (max 500 characters, includes emojis).
-    2. Provide ${thumbCount} specific image descriptions for the carousel. 
+    2. Provide ${thumbCount} specific image descriptions for the carousel.
        Style: ${thumbStyle}.
        Prompt Template: ${agent.thumbnailGenConfig?.promptTemplate || "An image of {agent_name} {activity}"}
     3. Suggest 5 relevant hashtags.
 
-    Format your response EXACTLY as a JSON object with these keys: 
-    "content" (the caption string), 
-    "tags" (array of strings), 
+    Format your response EXACTLY as a JSON object with these keys:
+    "content" (the caption string),
+    "tags" (array of strings),
     "thumbnailIdeas" (array of strings describing each image).
-    
+
     No other text or markdown.`;
 
 		try {

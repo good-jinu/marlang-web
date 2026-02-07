@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -11,6 +12,7 @@ export default function AdminLayout({
 }) {
 	const { user, isAdmin, loading } = useAuth();
 	const router = useRouter();
+	const pathname = usePathname();
 
 	useEffect(() => {
 		if (!loading) {
@@ -30,12 +32,34 @@ export default function AdminLayout({
 		);
 	}
 
+	const navLinks = [
+		{ name: "Dashboard", href: "/admin" },
+		{ name: "Posts", href: "/admin/posts" },
+		{ name: "AI Agent", href: "/admin/agent" },
+		{ name: "Users", href: "/admin/users" },
+	];
+
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col">
 			{/* Basic Admin Header */}
 			<header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
 				<div className="flex items-center gap-4">
 					<h2 className="text-xl font-bold text-gray-800">Admin Dashboard</h2>
+					<nav className="hidden md:flex items-center gap-1 ml-8">
+						{navLinks.map((link) => (
+							<Link
+								key={link.href}
+								href={link.href}
+								className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+									pathname === link.href
+										? "bg-indigo-100 text-indigo-700"
+										: "text-gray-600 hover:bg-gray-100"
+								}`}
+							>
+								{link.name}
+							</Link>
+						))}
+					</nav>
 				</div>
 				<div className="flex items-center gap-4">
 					<span className="text-sm text-gray-600">{user.email}</span>
@@ -48,6 +72,25 @@ export default function AdminLayout({
 					</button>
 				</div>
 			</header>
+
+			{/* Mobile Navigation */}
+			<div className="md:hidden bg-white border-b border-gray-200 px-6 py-2 overflow-x-auto">
+				<nav className="flex gap-1">
+					{navLinks.map((link) => (
+						<Link
+							key={link.href}
+							href={link.href}
+							className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+								pathname === link.href
+									? "bg-indigo-100 text-indigo-700"
+									: "text-gray-600 hover:bg-gray-100"
+							}`}
+						>
+							{link.name}
+						</Link>
+					))}
+				</nav>
+			</div>
 
 			{/* Admin Content */}
 			<main className="flex-1 p-6 max-w-7xl mx-auto w-full">{children}</main>

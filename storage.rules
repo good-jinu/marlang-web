@@ -1,8 +1,22 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+
+    // Helper function to check admin status
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.admin == true;
+    }
+
+    // Admin-only write, public read for certain paths
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin-only access for everything else
     match /{allPaths=**} {
-      allow read, write;
+      allow read, write: if isAdmin();
     }
   }
 }

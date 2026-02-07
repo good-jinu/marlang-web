@@ -1,23 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Public read access for published posts
-    match /posts/{postId} {
-      allow read: if resource.data.status == 'published';
-      allow read: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
-      allow write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+
+    // Helper function to check admin status
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.admin == true;
     }
-    
+
+    // Public read for published posts, admin full access
+    match /posts/{postId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow write: if isAdmin();
+    }
+
     // AI Agent config - public read, admin write
     match /aiAgents/{agentId} {
       allow read: if true;
-      allow write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+      allow write: if isAdmin();
     }
-    
-    // Admin whitelist - only accessible by self or other admins (if needed)
-    match /admins/{email} {
-      allow read: if request.auth != null && request.auth.token.email == email;
-      allow write: if false; // Only manageable via Firebase Console for safety
+
+    // Admin collection - read-only via console
+    match /admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
     }
   }
 }

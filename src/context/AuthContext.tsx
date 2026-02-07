@@ -7,10 +7,9 @@ import {
 	signOut,
 	type User,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase/config";
+import { auth } from "@/lib/firebase/config";
 
 interface AuthContextType {
 	user: User | null;
@@ -31,9 +30,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			setUser(user);
 			if (user) {
-				// Check if user is in the admin whitelist
-				const adminDoc = await getDoc(doc(db, "admins", user.email || ""));
-				setIsAdmin(adminDoc.exists());
+				// Get the ID token to check for admin claims
+				const idTokenResult = await user.getIdTokenResult();
+				setIsAdmin(idTokenResult.claims.admin === true);
 			} else {
 				setIsAdmin(false);
 			}
