@@ -1,6 +1,7 @@
 "use client";
 
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import {
 	Bot,
 	CheckCircle2,
@@ -11,12 +12,13 @@ import {
 	Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { db } from "@/lib/firebase/config";
+import { db, functions } from "@/lib/firebase/config";
 
 export default function AgentConfig() {
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [success, setSuccess] = useState(false);
+	const [runningAgent, setRunningAgent] = useState(false);
 
 	// Agent Config State
 	const [name, setName] = useState("Marlang");
@@ -89,6 +91,33 @@ export default function AgentConfig() {
 	useEffect(() => {
 		fetchConfig();
 	}, [fetchConfig]);
+
+	async function handleRunImmediately() {
+		if (
+			!confirm(
+				"Are you sure you want to run the AI agent now? This will generate a new post immediately.",
+			)
+		)
+			return;
+
+		setRunningAgent(true);
+		try {
+			const runAgent = httpsCallable(functions, "runAgentImmediately");
+			const result = await runAgent();
+			console.log("Run result:", result.data);
+			alert("Agent task completed successfully!");
+			fetchConfig(); // Refresh to get latest run timestamp
+		} catch (error) {
+			console.error("Run failed:", error);
+			alert(
+				`Failed to run agent: ${
+					error instanceof Error ? error.message : "Unknown error"
+				}`,
+			);
+		} finally {
+			setRunningAgent(false);
+		}
+	}
 
 	async function handleSave() {
 		setSaving(true);
@@ -444,12 +473,28 @@ export default function AgentConfig() {
 
 					{/* Schedule Section */}
 					<section className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
-						<h3 className="font-extrabold text-gray-900 text-lg flex items-center gap-3">
-							<span className="p-2 bg-amber-50 text-amber-600 rounded-xl">
-								<Clock size={20} />
-							</span>
-							Scheduling
-						</h3>
+						<div className="flex items-center justify-between border-b border-gray-50 pb-6">
+							<h3 className="font-extrabold text-gray-900 text-lg flex items-center gap-3">
+								<span className="p-2 bg-amber-50 text-amber-600 rounded-xl">
+									<Clock size={20} />
+								</span>
+								Scheduling
+							</h3>
+
+							<button
+								type="button"
+								onClick={handleRunImmediately}
+								disabled={runningAgent}
+								className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors disabled:opacity-50"
+							>
+								{runningAgent ? (
+									<Loader2 size={14} className="animate-spin" />
+								) : (
+									<Zap size={14} />
+								)}
+								Run Now
+							</button>
+						</div>
 
 						<div className="space-y-6">
 							<label className="flex items-center gap-3 cursor-pointer group">
