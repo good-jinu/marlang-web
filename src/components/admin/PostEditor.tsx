@@ -107,7 +107,6 @@ export default function PostEditor() {
 			authorId: string;
 			metadata: { imageCount: number };
 			title?: string;
-			slug?: string;
 		} = {
 			content,
 			thumbnails,
@@ -124,10 +123,9 @@ export default function PostEditor() {
 			},
 		};
 
-		// Keep title and slug for backward compatibility if needed,
-		// but derive them if they don't exist
+		// Keep title for backward compatibility if needed,
+		// but derive it if it doesn't exist
 		postData.title = content.slice(0, 50) + (content.length > 50 ? "..." : "");
-		postData.slug = isEditing ? undefined : `post-${Date.now()}`;
 
 		try {
 			if (isEditing) {
@@ -152,7 +150,7 @@ export default function PostEditor() {
 
 	if (loading)
 		return (
-			<div className="flex items-center justify-center p-20 text-gray-400">
+			<div className="flex items-center justify-center p-20 text-muted-foreground">
 				<Loader2 className="w-6 h-6 animate-spin mr-2" />
 				Loading editor...
 			</div>
@@ -162,10 +160,10 @@ export default function PostEditor() {
 		<div className="max-w-2xl mx-auto space-y-8 pb-20">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold text-gray-900">
+					<h1 className="text-2xl font-bold text-foreground">
 						{isEditing ? "Edit Post" : "New Post"}
 					</h1>
-					<p className="text-gray-500 text-sm">
+					<p className="text-muted-foreground text-sm">
 						Share a moment with the world.
 					</p>
 				</div>
@@ -173,7 +171,7 @@ export default function PostEditor() {
 					<button
 						type="button"
 						onClick={() => router.back()}
-						className="px-5 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
+						className="px-5 py-2 rounded-xl border border-border text-secondary-foreground font-medium hover:bg-muted transition-colors"
 					>
 						Cancel
 					</button>
@@ -181,7 +179,7 @@ export default function PostEditor() {
 						form="post-form"
 						type="submit"
 						disabled={saving || uploading}
-						className="px-8 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 disabled:opacity-50 disabled:shadow-none"
+						className="px-8 py-2 rounded-xl bg-primary text-primary-foreground font-bold  transition-all shadow-lg  disabled:opacity-50 disabled:shadow-none"
 					>
 						{saving ? "Saving..." : "Post"}
 					</button>
@@ -189,10 +187,10 @@ export default function PostEditor() {
 			</div>
 
 			<form id="post-form" onSubmit={handleSave} className="space-y-8">
-				<div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+				<div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
 					{/* Thumbnail Gallery Editor */}
-					<div className="p-8 border-b border-gray-50 space-y-4">
-						<span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
+					<div className="p-8 border-b border-border space-y-4">
+						<span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
 							Photos (Multiple allowed, at least one required)
 						</span>
 
@@ -200,7 +198,7 @@ export default function PostEditor() {
 							{thumbnails.map((url, index) => (
 								<div
 									key={url}
-									className="relative aspect-square rounded-xl overflow-hidden group border border-gray-100"
+									className="relative aspect-square rounded-xl overflow-hidden group border border-border"
 								>
 									<Image
 										src={url}
@@ -211,12 +209,12 @@ export default function PostEditor() {
 									<button
 										type="button"
 										onClick={() => removeThumbnail(index)}
-										className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+										className="absolute top-2 right-2 p-1.5 bg-muted/50 text-primary-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-muted/70"
 									>
 										<X size={14} />
 									</button>
 									{index === 0 && (
-										<span className="absolute bottom-2 left-2 px-2 py-0.5 bg-indigo-600 text-white text-[10px] font-bold rounded-md">
+										<span className="absolute bottom-2 left-2 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-bold rounded-md">
 											Cover
 										</span>
 									)}
@@ -224,7 +222,7 @@ export default function PostEditor() {
 							))}
 
 							<label
-								className={`aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/30 transition-all ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
+								className={`aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-all ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
 							>
 								<input
 									type="file"
@@ -235,11 +233,11 @@ export default function PostEditor() {
 									className="hidden"
 								/>
 								{uploading ? (
-									<Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+									<Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
 								) : (
 									<>
-										<Plus className="w-6 h-6 text-gray-400 mb-1" />
-										<span className="text-xs text-gray-400 font-medium">
+										<Plus className="w-6 h-6 text-muted-foreground mb-1" />
+										<span className="text-xs text-muted-foreground font-medium">
 											Add Photo
 										</span>
 									</>
@@ -253,7 +251,7 @@ export default function PostEditor() {
 						<div className="space-y-2">
 							<label
 								htmlFor="post-content"
-								className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+								className="text-xs font-bold text-muted-foreground uppercase tracking-wider"
 							>
 								Caption
 							</label>
@@ -264,20 +262,20 @@ export default function PostEditor() {
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
 								placeholder="Write a caption..."
-								className="w-full px-0 py-2 text-lg border-none focus:ring-0 outline-none resize-none placeholder:text-gray-300"
+								className="w-full px-0 py-2 text-lg border-none focus:ring-0 outline-none resize-none placeholder:text-muted-foreground"
 							/>
 						</div>
 
-						<div className="pt-6 border-t border-gray-50 grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div className="pt-6 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div className="space-y-2">
 								<label
 									htmlFor="post-tags"
-									className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+									className="text-xs font-bold text-muted-foreground uppercase tracking-wider"
 								>
 									Tags
 								</label>
-								<div className="flex items-center border border-gray-100 rounded-xl px-4 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
-									<span className="text-gray-400 mr-1">#</span>
+								<div className="flex items-center border border-border rounded-xl px-4 focus-within:ring-2 focus-within:ring-ring transition-all">
+									<span className="text-muted-foreground mr-1">#</span>
 									<input
 										id="post-tags"
 										type="text"
@@ -291,7 +289,7 @@ export default function PostEditor() {
 							<div className="space-y-2">
 								<label
 									htmlFor="post-status"
-									className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+									className="text-xs font-bold text-muted-foreground uppercase tracking-wider"
 								>
 									Visibility
 								</label>
@@ -299,7 +297,7 @@ export default function PostEditor() {
 									id="post-status"
 									value={status}
 									onChange={(e) => setStatus(e.target.value)}
-									className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-indigo-100 outline-none transition-all bg-white text-sm"
+									className="w-full px-4 py-3 rounded-xl border border-border focus:ring-2 focus:ring-ring outline-none transition-all bg-card text-sm"
 								>
 									<option value="published">Public</option>
 									<option value="draft">Private Draft</option>

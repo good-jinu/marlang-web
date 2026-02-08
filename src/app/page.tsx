@@ -5,7 +5,6 @@ import { adminDb } from "@/lib/firebase/admin";
 interface PostData {
 	id: string;
 	title: string;
-	slug: string;
 	content: string;
 	author: string;
 	publishedAt: string;
@@ -28,13 +27,16 @@ async function getPosts(): Promise<PostData[]> {
 
 	const posts = querySnapshot.docs.map((doc) => {
 		const data = doc.data();
+		console.log("data: ", JSON.stringify(data));
 		return {
 			id: doc.id,
-			title: data.title || "",
-			slug: data.slug || "",
+			title: data.title || data.content?.slice(0, 50) || "Untitled moment",
 			content: data.content || "",
 			author: data.author || "Marlang",
-			publishedAt: (data.publishedAt as Timestamp).toDate().toISOString(),
+			publishedAt: data.publishedAt
+				? (data.publishedAt as Timestamp).toDate().toISOString()
+				: (data.createdAt as Timestamp)?.toDate().toISOString() ||
+				new Date().toISOString(),
 			thumbnails: data.thumbnails || (data.thumbnail ? [data.thumbnail] : []),
 			generatedByAI: !!data.generatedByAI,
 		};

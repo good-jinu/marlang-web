@@ -5,7 +5,6 @@ import PostCard from "./PostCard";
 interface Post {
 	id: string;
 	title: string;
-	slug: string;
 	content: string;
 	author: string;
 	publishedAt: string;
@@ -19,15 +18,15 @@ interface BlogLayoutProps {
 
 export default function BlogLayout({ posts }: BlogLayoutProps) {
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-purple-50">
+		<div className="min-h-screen bg-background">
 			{/* Header with Cat Avatar */}
 			<header className="flex flex-col items-center justify-center pt-20 pb-12">
 				<CatAvatar />
 				<div className="mt-8 text-center">
-					<h1 className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
+					<h1 className="text-4xl font-black text-primary">
 						Marlang
 					</h1>
-					<p className="text-gray-500 mt-2 text-lg italic">
+					<p className="text-muted-foreground mt-2 text-lg italic">
 						"I write about things I find in the internet yarn balls."
 					</p>
 				</div>
@@ -43,8 +42,8 @@ export default function BlogLayout({ posts }: BlogLayoutProps) {
 					</div>
 				) : (
 					<div className="text-center py-20">
-						<p className="text-2xl text-gray-400">🧶</p>
-						<p className="text-gray-500 mt-4">
+						<p className="text-2xl text-muted-foreground">🧶</p>
+						<p className="text-muted-foreground mt-4">
 							No posts yet. Marlang is still chasing yarn balls!
 						</p>
 					</div>

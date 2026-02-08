@@ -20,11 +20,7 @@ export default function AgentConfig() {
 
 	// Agent Config State
 	const [name, setName] = useState("Marlang");
-	const [bio, setBio] = useState("An AI cat that explores the internet.");
 	const [personality, setPersonality] = useState({
-		tone: "playful",
-		style: "conversational",
-		interests: "yarn balls, space lasers, javascript hooks",
 		systemPrompt: "You are Marlang, a white animated AI cat...",
 	});
 	const [modelConfig, setModelConfig] = useState({
@@ -51,15 +47,12 @@ export default function AgentConfig() {
 			if (docSnap.exists()) {
 				const data = docSnap.data();
 				setName(data.name || "Marlang");
-				setBio(data.bio || "");
 
-				setPersonality((prev) => ({
-					...prev,
-					...data.personality,
-					interests: Array.isArray(data.personality?.interests)
-						? data.personality.interests.join(", ")
-						: prev.interests,
-				}));
+				if (data.personality?.systemPrompt) {
+					setPersonality({
+						systemPrompt: data.personality.systemPrompt,
+					});
+				}
 
 				setModelConfig((prev) => ({
 					...prev,
@@ -103,13 +96,8 @@ export default function AgentConfig() {
 		try {
 			const configData = {
 				name,
-				bio,
 				personality: {
-					...personality,
-					interests: personality.interests
-						.split(",")
-						.map((i) => i.trim())
-						.filter(Boolean),
+					systemPrompt: personality.systemPrompt,
 				},
 				modelConfig,
 				scheduledPosting: {
@@ -187,80 +175,19 @@ export default function AgentConfig() {
 							Personality & Identity
 						</h3>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-							<div className="space-y-2">
-								<label
-									htmlFor="agent-name"
-									className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
-								>
-									Agent Name
-								</label>
-								<input
-									id="agent-name"
-									type="text"
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-									className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50/50 outline-none transition-all bg-gray-50/50 text-sm font-bold text-gray-800"
-								/>
-							</div>
-							<div className="space-y-2">
-								<label
-									htmlFor="tone-of-voice"
-									className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
-								>
-									Tone of Voice
-								</label>
-								<select
-									id="tone-of-voice"
-									value={personality.tone}
-									onChange={(e) =>
-										setPersonality({ ...personality, tone: e.target.value })
-									}
-									className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-indigo-500 outline-none transition-all bg-gray-50/50 text-sm font-bold text-gray-800"
-								>
-									<option value="playful">Playful & Curious</option>
-									<option value="professional">
-										Professional & Analytical
-									</option>
-									<option value="mystical">Mystical & Philosophical</option>
-									<option value="minimalist">Minimalist & Direct</option>
-								</select>
-							</div>
-						</div>
-
 						<div className="space-y-2">
 							<label
-								htmlFor="agent-bio"
+								htmlFor="agent-name"
 								className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
 							>
-								Short Biography
+								Agent Name
 							</label>
 							<input
-								id="agent-bio"
+								id="agent-name"
 								type="text"
-								value={bio}
-								onChange={(e) => setBio(e.target.value)}
-								className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-indigo-500 outline-none transition-all bg-gray-50/50 text-sm font-medium text-gray-600"
-								placeholder="A brief description of who this agent is..."
-							/>
-						</div>
-
-						<div className="space-y-2">
-							<label
-								htmlFor="core-interests"
-								className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
-							>
-								Core Interests (Keywords)
-							</label>
-							<input
-								id="core-interests"
-								type="text"
-								value={personality.interests}
-								onChange={(e) =>
-									setPersonality({ ...personality, interests: e.target.value })
-								}
-								className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-indigo-500 outline-none transition-all bg-gray-50/50 text-sm font-medium text-gray-600"
-								placeholder="space, catnip, web dev, tuna..."
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50/50 outline-none transition-all bg-gray-50/50 text-sm font-bold text-gray-800"
 							/>
 						</div>
 
@@ -441,6 +368,8 @@ export default function AgentConfig() {
 									}
 									className="w-full px-5 py-3 rounded-2xl bg-slate-800 border border-slate-700 focus:border-amber-400 outline-none transition-all text-sm font-bold text-slate-200"
 								>
+									<option value="gemini-3-pro-preview">Gemini 3 Pro</option>
+									<option value="gemini-3-flash-preview">Gemini 3 Flash</option>
 									<option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
 									<option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
 									<option value="gemini-2.5-flash-lite">
@@ -565,7 +494,7 @@ export default function AgentConfig() {
 									onChange={(e) =>
 										setScheduledPosting({
 											...scheduledPosting,
-											schedule: parseInt(e.target.value),
+											schedule: parseInt(e.target.value, 10),
 										})
 									}
 									className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-amber-500 outline-none transition-all bg-gray-50/50 text-sm font-bold text-gray-800"

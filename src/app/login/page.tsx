@@ -32,26 +32,26 @@ export default function LoginPage() {
 
 	if (loading) {
 		return (
-			<div className="flex items-center justify-center min-h-screen bg-slate-50">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+			<div className="flex items-center justify-center min-h-screen bg-muted">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-slate-50 p-4">
+		<div className="flex items-center justify-center min-h-screen bg-muted p-4">
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
-				className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-8"
+				className="max-w-md w-full bg-card rounded-2xl shadow-xl p-8 space-y-8"
 			>
 				<div className="text-center">
-					<h1 className="text-3xl font-bold text-gray-900 mb-2">AI Cat Blog</h1>
-					<p className="text-gray-600">Admin Authentication</p>
+					<h1 className="text-3xl font-bold text-foreground mb-2">AI Cat Blog</h1>
+					<p className="text-muted-foreground">Admin Authentication</p>
 				</div>
 
 				{error && (
-					<div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-100">
+					<div className="bg-error text-error-foreground p-4 rounded-lg text-sm border border-error-border">
 						{error}
 					</div>
 				)}
@@ -59,7 +59,7 @@ export default function LoginPage() {
 				<button
 					type="button"
 					onClick={handleLogin}
-					className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-xl py-3 px-4 text-gray-700 font-medium hover:bg-gray-50 transition-colors shadow-sm"
+					className="w-full flex items-center justify-center gap-3 bg-card border border-border rounded-xl py-3 px-4 text-muted-foreground font-medium hover:bg-muted transition-colors shadow-sm"
 				>
 					<Image
 						src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -72,7 +72,7 @@ export default function LoginPage() {
 					Sign in with Google
 				</button>
 
-				<p className="text-center text-xs text-gray-500">
+				<p className="text-center text-xs text-muted-foreground">
 					Only authorized administrators can access this area.
 				</p>
 			</motion.div>

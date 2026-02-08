@@ -3,6 +3,29 @@
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
+
+	--primary: #007bff;
+	--primary-foreground: #ffffff;
+
+	--secondary: #6c757d;
+	--secondary-foreground: #ffffff;
+
+	--accent: #6f42c1;
+	--accent-foreground: #ffffff;
+
+	--muted: #f8f9fa;
+	--muted-foreground: #6c757d;
+
+	--card: #ffffff;
+	--card-foreground: #171717;
+
+	--border: #dee2e6;
+	--input: #ced4da;
+	--ring: #007bff;
+
+	--error: #fef2f2; /* red-50 */
+	--error-foreground: #ef4444; /* red-600 */
+	--error-border: #fecaca; /* red-200 */
 }
 
 @theme inline {
@@ -16,6 +39,29 @@
 	:root {
 		--background: #0a0a0a;
 		--foreground: #ededed;
+
+		--primary: #66b3ff; /* Lighter primary for dark mode */
+		--primary-foreground: #0a0a0a;
+
+		--secondary: #adb5bd; /* Lighter secondary for dark mode */
+		--secondary-foreground: #0a0a0a;
+
+		--accent: #bb86fc; /* Lighter accent for dark mode */
+		--accent-foreground: #0a0a0a;
+
+		--muted: #1c1c1c; /* Darker muted for dark mode */
+		--muted-foreground: #adb5bd;
+
+		--card: #121212; /* Darker card for dark mode */
+		--card-foreground: #ededed;
+
+		--border: #343a40; /* Darker border for dark mode */
+		--input: #495057; /* Darker input for dark mode */
+		--ring: #66b3ff; /* Lighter ring for dark mode */
+
+		--error: #450a0a; /* dark red-950 */
+		--error-foreground: #ef4444; /* red-600 */
+		--error-border: #7f1d1d; /* dark red-900 */
 	}
 }
 

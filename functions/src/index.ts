@@ -1,32 +1,38 @@
 import * as crypto from "node:crypto";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
-import { getStorage } from "firebase-admin/storage";
+import { getDownloadURL, getStorage } from "firebase-admin/storage";
 import { logger } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 initializeApp();
 
 /* ------------------------------------------------------------------ */
-/* Utils */
+/* Schemas */
 /* ------------------------------------------------------------------ */
 
-function slugify(text: string): string {
-	return text
-		.toLowerCase()
-		.trim()
-		.replace(/\s+/g, "-")
-		.replace(/[^\w-]/g, "")
-		.replace(/--+/g, "-")
-		.replace(/^-+|-+$/g, "");
-}
+const postSchema = z.object({
+	title: z.string().describe("The title of the blog post."),
+	content: z.string().describe("The main content of the blog post."),
+	tags: z.array(z.string()).describe("List of tags for the post."),
+	thumbnailIdeas: z
+		.array(z.string())
+		.describe("List of descriptive ideas for thumbnails."),
+});
 
-function extractJson(text: string): unknown {
-	const match = text.match(/\{[\s\S]*\}/);
-	if (!match) throw new Error("No JSON object found in model output");
-	return JSON.parse(match[0]);
-}
+const jsonExample = JSON.stringify(
+	{
+		title: "The Future of AI Agents",
+		content: "Detailed discussion about autonomous systems...",
+		tags: ["AI", "Tech", "Automation"],
+		thumbnailIdeas: ["A futuristic robot writing on a digital screen"],
+	},
+	null,
+	2,
+);
 
 /* ------------------------------------------------------------------ */
 /* Types */
@@ -34,11 +40,7 @@ function extractJson(text: string): unknown {
 
 interface AgentConfig {
 	name: string;
-	bio: string;
 	personality: {
-		tone: string;
-		style: string;
-		interests: string[];
 		systemPrompt: string;
 	};
 	scheduledPosting?: {
@@ -59,16 +61,10 @@ interface AgentConfig {
 	};
 }
 
-interface GeneratedPostResponse {
-	title: string;
-	content: string;
-	tags: string[];
-	thumbnailIdeas: string[];
-}
+// GeneratedPostResponse type is inferred from postSchema below
 
 interface BlogPost {
 	title: string;
-	slug: string;
 	content: string;
 	thumbnails: string[];
 	status: "published" | "draft";
@@ -92,10 +88,12 @@ interface BlogPost {
 
 export const generateDailyBlogPost = onSchedule(
 	{
-		schedule: "47 * * * *",
+		schedule: "0 * * * *",
 		timeZone: "UTC",
 		region: "asia-east1",
-		memory: "256MiB",
+		memory: "1GiB",
+		timeoutSeconds: 300,
+		secrets: ["GOOGLE_AI_API_KEY"],
 	},
 	async () => {
 		logger.info("=== Daily blog post generation started ===");
@@ -139,64 +137,58 @@ export const generateDailyBlogPost = onSchedule(
 				hoursSinceLastRun,
 			});
 
-			if (now.getTime() - lastRun.getTime() < 23 * 60 * 60 * 1000) {
-				logger.info("Already ran within the last 23 hours. Exiting.");
+			if (now.getTime() - lastRun.getTime() < 60 * 60 * 1000) {
+				logger.info("Already ran within the last 1 hours. Exiting.");
 				return;
 			}
 		} else {
 			logger.info("No previous run detected.");
 		}
 
-		if (!process.env.GOOGLE_AI_API_KEY) {
-			logger.error("GOOGLE_AI_API_KEY environment variable not set. Exiting.");
-			throw new Error("GOOGLE_AI_API_KEY not set");
-		}
-		const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
-		logger.info("GoogleGenerativeAI initialized");
+		const ai = new GoogleGenAI({
+			apiKey: process.env.GOOGLE_AI_API_KEY,
+		});
+		logger.info("GoogleGenAI initialized");
 
 		/* ---------------- Text Generation ---------------- */
 
 		const modelName = agent.modelConfig?.model ?? "gemini-1.5-flash";
 		logger.info("Initializing text model:", { modelName });
 
-		const textModel = genAI.getGenerativeModel({
-			model: modelName,
-		});
+		logger.info("Generating text content...");
+		const structuredPrompt = `
+${agent.personality.systemPrompt}
 
-		const prompt = `
-You are ${agent.name}. ${agent.bio}
+### OUTPUT INSTRUCTIONS
+You must return only valid JSON. 
+Do not include markdown formatting or backticks.
 
-Tone: ${agent.personality.tone}
-Style: ${agent.personality.style}
-Interests: ${agent.personality.interests.join(", ")}
+### EXAMPLE OUTPUT FORMAT
+${jsonExample}
 
-TASK:
-Create an Instagram-style post.
-
-OUTPUT JSON ONLY with:
-{
-  "title": string,
-  "content": string,
-  "tags": string[],
-  "thumbnailIdeas": string[]
-}
+### START GENERATION
 `;
 
-		logger.info("Generating text content...");
-		const textResult = await textModel.generateContent(prompt);
-		const response = await textResult.response;
-		const rawText = response.text();
+		const textResult = await ai.models.generateContent({
+			model: modelName,
+			contents: [{ role: "user", parts: [{ text: structuredPrompt }] }],
+			config: {
+				responseMimeType: "application/json",
+				responseJsonSchema: zodToJsonSchema(postSchema as any),
+			},
+		});
+
+		const rawText = textResult.text;
 
 		if (!rawText) {
 			logger.error("No text generated from model");
 			throw new Error("No text generated");
 		}
 
-		logger.info("Raw text received:", { length: rawText.length });
-		logger.debug("Raw text preview:", rawText.substring(0, 200));
+		logger.debug("Raw text preview:", rawText);
 
-		const postData = extractJson(rawText) as GeneratedPostResponse;
-		logger.info("Post data extracted:", {
+		const postData = postSchema.parse(JSON.parse(rawText));
+		logger.info("Post data extracted and validated:", {
 			title: postData.title,
 			tagCount: postData.tags.length,
 			thumbnailIdeaCount: postData.thumbnailIdeas.length,
@@ -207,64 +199,58 @@ OUTPUT JSON ONLY with:
 		const imageUrls: string[] = [];
 
 		if (agent.thumbnailGenConfig?.enabled) {
-			logger.info("Image generation enabled. Starting...");
+			logger.info(
+				`Image generation enabled using GoogleGenAI. Project: ${process.env.GCLOUD_PROJECT}`,
+			);
 
-			const imageModel = genAI.getGenerativeModel({
-				model: "imagen-3.0-generate-001",
-			});
+			const imagePrompt = postData.thumbnailIdeas[0] || postData.title;
+			const imageCount = agent.thumbnailGenConfig.count || 1;
 
-			const maxImages = Math.min(postData.thumbnailIdeas.length, 3);
-			const delayBetweenRequests = 15000; // 15 seconds
+			logger.info(`Generating ${imageCount} images for prompt: ${imagePrompt}`);
 
-			for (let i = 0; i < maxImages; i++) {
-				const idea = postData.thumbnailIdeas[i];
-				logger.info(`Generating image ${i + 1}/${maxImages}: ${idea}`);
+			try {
+				const imageResponse = await ai.models.generateImages({
+					model: "imagen-4.0-generate-001",
+					prompt: imagePrompt,
+					config: {
+						numberOfImages: imageCount,
+					},
+				});
 
-				try {
-					if (i > 0) {
-						logger.info(
-							`Waiting ${delayBetweenRequests}ms before next image...`,
-						);
-						await new Promise((resolve) =>
-							setTimeout(resolve, delayBetweenRequests),
-						);
-					}
+				logger.info(
+					`Received ${imageResponse.generatedImages?.length || 0} images from AI`,
+				);
 
-					const imageResult = await imageModel.generateContent(idea);
-					const imageResponse = await imageResult.response;
-					const base64 =
-						imageResponse.candidates?.[0].content.parts[0].inlineData?.data;
+				if (imageResponse.generatedImages) {
+					for (let i = 0; i < imageResponse.generatedImages.length; i++) {
+						const generatedImage = imageResponse.generatedImages[i];
+						if (!generatedImage.image) {
+							logger.warn(`No image data for image ${i + 1}`);
+							continue;
+						}
+						const imgBytes = generatedImage.image.imageBytes;
 
-					if (!base64) {
-						logger.warn(`No base64 data for image ${i + 1}`);
-						continue;
-					}
+						if (!imgBytes) {
+							logger.warn(`No image bytes for image ${i + 1}`);
+							continue;
+						}
 
-					logger.info(`Image ${i + 1} generated. Uploading to storage...`);
-					const buffer = Buffer.from(base64, "base64");
-					const filename = `posts/${crypto.randomUUID()}.png`;
-					const file = storage.file(filename);
+						const buffer = Buffer.from(imgBytes, "base64");
+						const filename = `post-images/${crypto.randomUUID()}.png`;
+						const file = storage.file(filename);
 
-					await file.save(buffer, {
-						contentType: "image/png",
-					});
-					logger.info(`Image ${i + 1} uploaded:`, { filename });
+						logger.info(`Uploading image ${i + 1} to storage...`);
+						await file.save(buffer, {
+							contentType: "image/png",
+						});
 
-					const [url] = await file.getSignedUrl({
-						action: "read",
-						expires: "03-01-2500",
-					});
-
-					imageUrls.push(url);
-					logger.info(`Signed URL created for image ${i + 1}`);
-				} catch (error: any) {
-					logger.error(`Error generating image ${i + 1}:`, error);
-
-					if (error.message?.includes("429")) {
-						logger.warn("Rate limit reached, stopping image generation");
-						break;
+						const url = await getDownloadURL(file);
+						imageUrls.push(url);
+						logger.info(`Image ${i + 1} saved and Download URL created`);
 					}
 				}
+			} catch (error: unknown) {
+				logger.error("Error generating images with GoogleGenAI:", error);
 			}
 
 			logger.info("Image generation complete:", {
@@ -279,15 +265,10 @@ OUTPUT JSON ONLY with:
 
 		/* ---------------- Persist ---------------- */
 
-		const slug = `${slugify(postData.title)}-${crypto
-			.randomBytes(3)
-			.toString("hex")}`;
-
-		logger.info("Creating post document:", { slug });
+		logger.info("Creating post document...");
 
 		const post: BlogPost = {
 			title: postData.title,
-			slug,
 			content: postData.content,
 			thumbnails: imageUrls,
 			status: "published",
@@ -309,8 +290,8 @@ OUTPUT JSON ONLY with:
 		};
 
 		logger.info("Saving post to Firestore...");
-		await db.collection("posts").doc(slug).set(post);
-		logger.info("Post saved successfully");
+		const postRef = await db.collection("posts").add(post);
+		logger.info("Post saved successfully with ID:", postRef.id);
 
 		logger.info("Updating agent lastRun timestamp...");
 		await db.collection("aiAgents").doc("main").update({
@@ -318,7 +299,7 @@ OUTPUT JSON ONLY with:
 		});
 
 		logger.info("=== Daily blog post generation completed successfully ===", {
-			postSlug: slug,
+			postId: postRef.id,
 			imageCount: imageUrls.length,
 		});
 	},

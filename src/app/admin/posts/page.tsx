@@ -22,7 +22,6 @@ interface Post {
 	status: string;
 	publishedAt: Timestamp;
 	createdAt: Timestamp;
-	slug: string;
 	generatedByAI: boolean;
 	thumbnails?: string[];
 	thumbnail?: string; // legacy
@@ -168,9 +167,7 @@ export default function PostsManagement() {
 															{post.content || post.title || "No content"}
 														</p>
 														<p className="text-[10px] text-gray-400 mt-0.5 font-medium">
-															{post.slug
-																? `/${post.slug}`
-																: `ID: ${post.id.slice(0, 8)}`}
+															ID: {post.id.slice(0, 8)}
 														</p>
 													</div>
 												</div>

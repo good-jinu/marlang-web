@@ -26,8 +26,8 @@ export default function AdminLayout({
 
 	if (loading || !user || !isAdmin) {
 		return (
-			<div className="flex items-center justify-center min-h-screen bg-slate-50">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+			<div className="flex items-center justify-center min-h-screen bg-muted">
+				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
 			</div>
 		);
 	}
@@ -40,7 +40,7 @@ export default function AdminLayout({
 	];
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col">
+		<div className="min-h-screen bg-background flex flex-col">
 			{/* Basic Admin Header */}
 			<header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
 				<div className="flex items-center gap-4">
@@ -50,11 +50,10 @@ export default function AdminLayout({
 							<Link
 								key={link.href}
 								href={link.href}
-								className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-									pathname === link.href
+								className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
 										? "bg-indigo-100 text-indigo-700"
 										: "text-gray-600 hover:bg-gray-100"
-								}`}
+									}`}
 							>
 								{link.name}
 							</Link>
@@ -80,11 +79,10 @@ export default function AdminLayout({
 						<Link
 							key={link.href}
 							href={link.href}
-							className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-								pathname === link.href
+							className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
 									? "bg-indigo-100 text-indigo-700"
 									: "text-gray-600 hover:bg-gray-100"
-							}`}
+								}`}
 						>
 							{link.name}
 						</Link>
