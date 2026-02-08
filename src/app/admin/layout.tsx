@@ -50,10 +50,11 @@ export default function AdminLayout({
 							<Link
 								key={link.href}
 								href={link.href}
-								className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
+								className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+									pathname === link.href
 										? "bg-indigo-100 text-indigo-700"
 										: "text-gray-600 hover:bg-gray-100"
-									}`}
+								}`}
 							>
 								{link.name}
 							</Link>
@@ -79,10 +80,11 @@ export default function AdminLayout({
 						<Link
 							key={link.href}
 							href={link.href}
-							className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === link.href
+							className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+								pathname === link.href
 									? "bg-indigo-100 text-indigo-700"
 									: "text-gray-600 hover:bg-gray-100"
-								}`}
+							}`}
 						>
 							{link.name}
 						</Link>

@@ -23,9 +23,7 @@ export default function BlogLayout({ posts }: BlogLayoutProps) {
 			<header className="flex flex-col items-center justify-center pt-20 pb-12">
 				<CatAvatar />
 				<div className="mt-8 text-center">
-					<h1 className="text-4xl font-black text-primary">
-						Marlang
-					</h1>
+					<h1 className="text-4xl font-black text-primary">Marlang</h1>
 					<p className="text-muted-foreground mt-2 text-lg italic">
 						"I write about things I find in the internet yarn balls."
 					</p>
