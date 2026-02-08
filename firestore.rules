@@ -14,16 +14,16 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // AI Agent config - public read, admin write
+    // AI Agent config - admin only
     match /aiAgents/{agentId} {
-      allow read: if true;
+      allow read: if isAdmin();
       allow write: if isAdmin();
     }
 
-    // Admin collection - read-only via console
+    // Admin collection - admin only
     match /admins/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if false;
+      allow read: if isAdmin();
+      allow write: if false; // Should be managed by backend functions
     }
   }
 }

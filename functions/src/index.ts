@@ -1,28 +1,37 @@
 import * as crypto from "node:crypto";
-import { VertexAI } from "@google-cloud/vertexai";
-import parser from "cron-parser";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { initializeApp } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import { onRequest } from "firebase-functions/v2/https";
+import { logger } from "firebase-functions/v2";
 import { onSchedule } from "firebase-functions/v2/scheduler";
 
 initializeApp();
 
+/* ------------------------------------------------------------------ */
+/* Utils */
+/* ------------------------------------------------------------------ */
+
 function slugify(text: string): string {
 	return text
-		.toString()
 		.toLowerCase()
 		.trim()
-		.replace(/\s+/g, "-") // Replace spaces with -
-		.replace(/[^\w-]+/g, "") // Remove all non-word chars
-		.replace(/--+/g, "-") // Replace multiple - with single -
-		.replace(/^-+/, "") // Trim - from start of text
-		.replace(/-+$/, ""); // Trim - from end of text
+		.replace(/\s+/g, "-")
+		.replace(/[^\w-]/g, "")
+		.replace(/--+/g, "-")
+		.replace(/^-+|-+$/g, "");
 }
 
-// 1. Define Interfaces for Type Safety
+function extractJson(text: string): unknown {
+	const match = text.match(/\{[\s\S]*\}/);
+	if (!match) throw new Error("No JSON object found in model output");
+	return JSON.parse(match[0]);
+}
+
+/* ------------------------------------------------------------------ */
+/* Types */
+/* ------------------------------------------------------------------ */
+
 interface AgentConfig {
 	name: string;
 	bio: string;
@@ -34,7 +43,7 @@ interface AgentConfig {
 	};
 	scheduledPosting?: {
 		enabled: boolean;
-		schedule: string;
+		schedule: number;
 		lastRun?: Timestamp;
 	};
 	modelConfig?: {
@@ -52,9 +61,9 @@ interface AgentConfig {
 
 interface GeneratedPostResponse {
 	title: string;
-	content: string; // The Caption
+	content: string;
 	tags: string[];
-	thumbnailIdeas: string[]; // Descriptions of what images should be
+	thumbnailIdeas: string[];
 }
 
 interface BlogPost {
@@ -77,333 +86,240 @@ interface BlogPost {
 	};
 }
 
-// Admin management functions
-export const setAdminClaim = onRequest(async (req, res) => {
-	if (req.method !== "POST") {
-		res.status(405).send("Method not allowed");
-		return;
-	}
-
-	// Verify the request comes from an authenticated admin
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
-		res.status(401).send("Unauthorized");
-		return;
-	}
-
-	try {
-		const token = authHeader.split("Bearer ")[1];
-		const decodedToken = await getAuth().verifyIdToken(token);
-
-		// Only allow if the user is already an admin
-		if (!decodedToken.admin) {
-			res.status(403).send("Forbidden: Only admins can set admin claims");
-			return;
-		}
-
-		const { uid, email } = req.body;
-		if (!uid) {
-			res.status(400).send("Missing UID in request body");
-			return;
-		}
-
-		// Set custom claim for admin
-		await getAuth().setCustomUserClaims(uid, { admin: true });
-
-		// Add user to admins collection for reference
-		await getFirestore()
-			.collection("admins")
-			.doc(uid)
-			.set({
-				email: email || "unknown",
-				createdAt: Timestamp.now(),
-				addedBy: decodedToken.uid,
-			});
-
-		res
-			.status(200)
-			.send({ success: true, message: `Admin claim set for user ${uid}` });
-	} catch (error) {
-		console.error("Error setting admin claim:", error);
-		res.status(500).send({ error: "Internal server error" });
-	}
-});
-
-export const removeAdminClaim = onRequest(async (req, res) => {
-	if (req.method !== "DELETE") {
-		res.status(405).send("Method not allowed");
-		return;
-	}
-
-	// Verify the request comes from an authenticated admin
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
-		res.status(401).send("Unauthorized");
-		return;
-	}
-
-	try {
-		const token = authHeader.split("Bearer ")[1];
-		const decodedToken = await getAuth().verifyIdToken(token);
-
-		// Only allow if the user is already an admin
-		if (!decodedToken.admin) {
-			res.status(403).send("Forbidden: Only admins can remove admin claims");
-			return;
-		}
-
-		const { uid } = req.body;
-		if (!uid) {
-			res.status(400).send("Missing UID in request body");
-			return;
-		}
-
-		// Remove custom claim for admin
-		await getAuth().setCustomUserClaims(uid, {});
-
-		// Remove user from admins collection
-		await getFirestore().collection("admins").doc(uid).delete();
-
-		res
-			.status(200)
-			.send({ success: true, message: `Admin claim removed for user ${uid}` });
-	} catch (error) {
-		console.error("Error removing admin claim:", error);
-		res.status(500).send({ error: "Internal server error" });
-	}
-});
-
-export const listAdmins = onRequest(async (req, res) => {
-	if (req.method !== "GET") {
-		res.status(405).send("Method not allowed");
-		return;
-	}
-
-	// Verify the request comes from an authenticated admin
-	const authHeader = req.headers.authorization;
-	if (!authHeader || !authHeader.startsWith("Bearer ")) {
-		res.status(401).send("Unauthorized");
-		return;
-	}
-
-	try {
-		const token = authHeader.split("Bearer ")[1];
-		const decodedToken = await getAuth().verifyIdToken(token);
-
-		// Only allow if the user is already an admin
-		if (!decodedToken.admin) {
-			res.status(403).send("Forbidden: Only admins can list admins");
-			return;
-		}
-
-		// Get all users with admin claims
-		const adminsCollection = await getFirestore().collection("admins").get();
-		const admins: { uid: string; [key: string]: unknown }[] = [];
-
-		adminsCollection.forEach((doc) => {
-			admins.push({
-				uid: doc.id,
-				...doc.data(),
-			});
-		});
-
-		res.status(200).send({ admins });
-	} catch (error) {
-		console.error("Error listing admins:", error);
-		res.status(500).send({ error: "Internal server error" });
-	}
-});
+/* ------------------------------------------------------------------ */
+/* Scheduler */
+/* ------------------------------------------------------------------ */
 
 export const generateDailyBlogPost = onSchedule(
 	{
-		schedule: "0 * * * *",
+		schedule: "47 * * * *",
 		timeZone: "UTC",
-		memory: "1GiB", // Increased for image processing
 		region: "asia-east1",
+		memory: "256MiB",
 	},
-	async (_event) => {
+	async () => {
+		logger.info("=== Daily blog post generation started ===");
+
 		const db = getFirestore();
-		const storage = getStorage();
-		const bucket = storage.bucket();
+		const storage = getStorage().bucket();
 
-		// 1. Get AI agent configuration
-		const agentDoc = await db.collection("aiAgents").doc("main").get();
+		logger.info("Fetching agent configuration...");
+		const agentSnap = await db.collection("aiAgents").doc("main").get();
 
-		if (!agentDoc.exists) {
-			console.log("No agent configuration found");
+		if (!agentSnap.exists) {
+			logger.warn("Agent document does not exist. Exiting.");
 			return;
 		}
 
-		const agent = agentDoc.data() as AgentConfig;
+		const agent = agentSnap.data() as AgentConfig;
+		logger.info("Agent loaded:", { name: agent.name });
 
 		if (!agent.scheduledPosting?.enabled) {
-			console.log("Scheduled posting is disabled");
+			logger.info("Scheduled posting is disabled. Exiting.");
 			return;
 		}
 
-		// 1.1 Check if it's time to run based on the configured schedule
-		try {
-			const lastRun = agent.scheduledPosting.lastRun?.toDate() || new Date(0);
-			const now = new Date();
-			const schedule = agent.scheduledPosting.schedule || "0 9 * * *";
+		const now = new Date();
+		const currentHour = now.getUTCHours();
+		logger.info(
+			`Time check: ${currentHour} === ${agent.scheduledPosting.schedule}`,
+		);
 
-			const interval = parser.parse(schedule, {
-				currentDate: lastRun,
-				tz: "UTC",
+		if (currentHour !== agent.scheduledPosting.schedule) {
+			logger.info("Not the scheduled hour. Exiting.");
+			return;
+		}
+
+		const lastRun = agent.scheduledPosting.lastRun?.toDate();
+		if (lastRun) {
+			const hoursSinceLastRun =
+				(now.getTime() - lastRun.getTime()) / (60 * 60 * 1000);
+			logger.info("Last run check:", {
+				lastRun: lastRun.toISOString(),
+				hoursSinceLastRun,
 			});
 
-			const nextExecution = interval.next().toDate();
-
-			if (nextExecution > now) {
-				console.log(
-					`Not time to run yet. Configured schedule: ${schedule}. Last run: ${lastRun.toISOString()}. Next planned execution: ${nextExecution.toISOString()}`,
-				);
+			if (now.getTime() - lastRun.getTime() < 23 * 60 * 60 * 1000) {
+				logger.info("Already ran within the last 23 hours. Exiting.");
 				return;
 			}
-			console.log(
-				`Time to run! Configured schedule: ${schedule}. Next execution was due at: ${nextExecution.toISOString()}`,
-			);
-		} catch (error) {
-			console.error("Error parsing cron schedule or checking last run:", error);
-			// Fallback: if cron is invalid, we might want to skip to avoid spamming or just use default.
-			// For now, let's just log and return to be safe.
-			return;
+		} else {
+			logger.info("No previous run detected.");
 		}
 
-		// 2. Initialize Vertex AI
-		const project = process.env.GCLOUD_PROJECT;
-		if (!project) throw new Error("GCLOUD_PROJECT env variable not set");
+		if (!process.env.GOOGLE_AI_API_KEY) {
+			logger.error("GOOGLE_AI_API_KEY environment variable not set. Exiting.");
+			throw new Error("GOOGLE_AI_API_KEY not set");
+		}
+		const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+		logger.info("GoogleGenerativeAI initialized");
 
-		const vertexAI = new VertexAI({
-			project: project,
-			location: "us-central1",
+		/* ---------------- Text Generation ---------------- */
+
+		const modelName = agent.modelConfig?.model ?? "gemini-1.5-flash";
+		logger.info("Initializing text model:", { modelName });
+
+		const textModel = genAI.getGenerativeModel({
+			model: modelName,
 		});
 
-		// 3. Generate Content (Caption & Image Descriptions)
-		const contentModel = vertexAI.getGenerativeModel({
-			model: agent.modelConfig?.model || "gemini-2.0-flash",
-			generationConfig: {
-				temperature: agent.modelConfig?.temperature || 0.7,
-				maxOutputTokens: agent.modelConfig?.maxOutputTokens || 2048,
-			},
+		const prompt = `
+You are ${agent.name}. ${agent.bio}
+
+Tone: ${agent.personality.tone}
+Style: ${agent.personality.style}
+Interests: ${agent.personality.interests.join(", ")}
+
+TASK:
+Create an Instagram-style post.
+
+OUTPUT JSON ONLY with:
+{
+  "title": string,
+  "content": string,
+  "tags": string[],
+  "thumbnailIdeas": string[]
+}
+`;
+
+		logger.info("Generating text content...");
+		const textResult = await textModel.generateContent(prompt);
+		const response = await textResult.response;
+		const rawText = response.text();
+
+		if (!rawText) {
+			logger.error("No text generated from model");
+			throw new Error("No text generated");
+		}
+
+		logger.info("Raw text received:", { length: rawText.length });
+		logger.debug("Raw text preview:", rawText.substring(0, 200));
+
+		const postData = extractJson(rawText) as GeneratedPostResponse;
+		logger.info("Post data extracted:", {
+			title: postData.title,
+			tagCount: postData.tags.length,
+			thumbnailIdeaCount: postData.thumbnailIdeas.length,
 		});
 
-		const thumbCount = agent.thumbnailGenConfig?.count || 1;
-		const thumbStyle =
-			agent.thumbnailGenConfig?.style || "Cinematic, realistic";
+		/* ---------------- Image Generation ---------------- */
 
-		const contentPrompt = `You are ${agent.name}, ${agent.bio}.
-    Tone: ${agent.personality.tone}, Style: ${agent.personality.style}.
-    Interests: ${agent.personality.interests.join(", ")}.
-    Instructions: ${agent.personality.systemPrompt}
+		const imageUrls: string[] = [];
 
-    Task: Create a new Instagram-style post for today.
+		if (agent.thumbnailGenConfig?.enabled) {
+			logger.info("Image generation enabled. Starting...");
 
-    Requirements:
-    1. Write a compelling TITLE for the post (max 60 characters).
-    2. Write a compelling CAPTION (max 500 characters, includes emojis).
-    3. Provide ${thumbCount} specific image descriptions for the carousel.
-       Style: ${thumbStyle}.
-       Prompt Template: ${agent.thumbnailGenConfig?.promptTemplate || "An image of {agent_name} {activity}"}
-    4. Suggest 5 relevant hashtags.
-
-    Format your response EXACTLY as a JSON object with these keys:
-    "title" (the title string),
-    "content" (the caption string),
-    "tags" (array of strings),
-    "thumbnailIdeas" (array of strings describing each image).
-
-    No other text or markdown.`;
-
-		try {
-			const result = await contentModel.generateContent(contentPrompt);
-			const response = await result.response;
-			const text = response.candidates?.[0].content.parts[0].text;
-			if (!text) throw new Error("No text generated");
-
-			const jsonStr = text
-				.replace(/```json/g, "")
-				.replace(/```/g, "")
-				.trim();
-			const postData = JSON.parse(jsonStr) as GeneratedPostResponse;
-
-			// 4. Generate Images using Imagen 3 (Nano Banana)
-			const imageModel = vertexAI.getGenerativeModel({
+			const imageModel = genAI.getGenerativeModel({
 				model: "imagen-3.0-generate-001",
 			});
 
-			const imageUrls: string[] = [];
+			const maxImages = Math.min(postData.thumbnailIdeas.length, 3);
+			const delayBetweenRequests = 15000; // 15 seconds
 
-			for (const desc of postData.thumbnailIdeas) {
+			for (let i = 0; i < maxImages; i++) {
+				const idea = postData.thumbnailIdeas[i];
+				logger.info(`Generating image ${i + 1}/${maxImages}: ${idea}`);
+
 				try {
-					console.log(`Generating image for: ${desc}`);
-					const imgResult = await imageModel.generateContent(desc);
-					const imgResponse = await imgResult.response;
-
-					// Imagen binary data is usually in inlineData
-					const part = imgResponse.candidates?.[0].content.parts[0];
-					if (part?.inlineData) {
-						const buffer = Buffer.from(part.inlineData.data, "base64");
-						const filename = `post-images/${crypto.randomUUID()}.png`;
-						const file = bucket.file(filename);
-
-						await file.save(buffer, {
-							metadata: { contentType: "image/png" },
-						});
-
-						// Use a public URL or signed URL (Public for this blog)
-						await file.makePublic();
-						const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
-						imageUrls.push(publicUrl);
+					if (i > 0) {
+						logger.info(
+							`Waiting ${delayBetweenRequests}ms before next image...`,
+						);
+						await new Promise((resolve) =>
+							setTimeout(resolve, delayBetweenRequests),
+						);
 					}
-				} catch (imgError) {
-					console.error("Image generation individual step failed:", imgError);
+
+					const imageResult = await imageModel.generateContent(idea);
+					const imageResponse = await imageResult.response;
+					const base64 =
+						imageResponse.candidates?.[0].content.parts[0].inlineData?.data;
+
+					if (!base64) {
+						logger.warn(`No base64 data for image ${i + 1}`);
+						continue;
+					}
+
+					logger.info(`Image ${i + 1} generated. Uploading to storage...`);
+					const buffer = Buffer.from(base64, "base64");
+					const filename = `posts/${crypto.randomUUID()}.png`;
+					const file = storage.file(filename);
+
+					await file.save(buffer, {
+						contentType: "image/png",
+					});
+					logger.info(`Image ${i + 1} uploaded:`, { filename });
+
+					const [url] = await file.getSignedUrl({
+						action: "read",
+						expires: "03-01-2500",
+					});
+
+					imageUrls.push(url);
+					logger.info(`Signed URL created for image ${i + 1}`);
+				} catch (error: any) {
+					logger.error(`Error generating image ${i + 1}:`, error);
+
+					if (error.message?.includes("429")) {
+						logger.warn("Rate limit reached, stopping image generation");
+						break;
+					}
 				}
 			}
 
-			// 5. Finalize Post
-			if (imageUrls.length === 0) {
-				console.log("Failed to generate any images, skipping post.");
-				return;
-			}
-
-			const baseSlug = slugify(postData.title);
-			const uniqueId = crypto.randomBytes(3).toString("hex");
-			const finalSlug = `${baseSlug}-${uniqueId}`;
-
-			const newPost: BlogPost = {
-				title: postData.title,
-				slug: finalSlug,
-				content: postData.content,
-				thumbnails: imageUrls,
-				status: "published",
-				publishedAt: Timestamp.now(),
-				createdAt: Timestamp.now(),
-				updatedAt: Timestamp.now(),
-				author: agent.name,
-				authorId: "main",
-				generatedByAI: true,
-				aiModelUsed: agent.modelConfig?.model || "gemini-2.0-flash",
-				tags: postData.tags || [],
-				metadata: {
-					imageCount: imageUrls.length,
-					thumbnailDescriptions: postData.thumbnailIdeas,
-				},
-			};
-
-			// Use the unique slug as the document ID for faster lookups
-			await db.collection("posts").doc(finalSlug).set(newPost);
-
-			// Update agent's last run
-			await db.collection("aiAgents").doc("main").update({
-				"scheduledPosting.lastRun": Timestamp.now(),
+			logger.info("Image generation complete:", {
+				totalImages: imageUrls.length,
 			});
-
-			console.log(
-				`Successfully generated Instagram post with ${imageUrls.length} real AI images.`,
-			);
-		} catch (error) {
-			console.error("AI Generation process failed:", error);
 		}
+
+		if (!imageUrls.length) {
+			logger.warn("No images were generated. Exiting without saving post.");
+			return;
+		}
+
+		/* ---------------- Persist ---------------- */
+
+		const slug = `${slugify(postData.title)}-${crypto
+			.randomBytes(3)
+			.toString("hex")}`;
+
+		logger.info("Creating post document:", { slug });
+
+		const post: BlogPost = {
+			title: postData.title,
+			slug,
+			content: postData.content,
+			thumbnails: imageUrls,
+			status: "published",
+			publishedAt: Timestamp.now(),
+			createdAt: Timestamp.now(),
+			updatedAt: Timestamp.now(),
+			author: agent.name,
+			authorId: "main",
+			generatedByAI: true,
+			aiModelUsed: modelName,
+			tags: postData.tags,
+			metadata: {
+				imageCount: imageUrls.length,
+				thumbnailDescriptions: postData.thumbnailIdeas.slice(
+					0,
+					imageUrls.length,
+				),
+			},
+		};
+
+		logger.info("Saving post to Firestore...");
+		await db.collection("posts").doc(slug).set(post);
+		logger.info("Post saved successfully");
+
+		logger.info("Updating agent lastRun timestamp...");
+		await db.collection("aiAgents").doc("main").update({
+			"scheduledPosting.lastRun": Timestamp.now(),
+		});
+
+		logger.info("=== Daily blog post generation completed successfully ===", {
+			postSlug: slug,
+			imageCount: imageUrls.length,
+		});
 	},
 );

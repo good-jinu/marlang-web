@@ -28,13 +28,13 @@ export default function AgentConfig() {
 		systemPrompt: "You are Marlang, a white animated AI cat...",
 	});
 	const [modelConfig, setModelConfig] = useState({
-		model: "gemini-2.0-flash",
+		model: "gemini-2.5-flash",
 		temperature: 0.7,
 		maxOutputTokens: 2048,
 	});
 	const [scheduledPosting, setScheduledPosting] = useState({
 		enabled: true,
-		schedule: "0 9 * * *",
+		schedule: 9,
 	});
 	const [thumbnailGenConfig, setThumbnailGenConfig] = useState({
 		enabled: true,
@@ -66,10 +66,18 @@ export default function AgentConfig() {
 					...data.modelConfig,
 				}));
 
-				setScheduledPosting((prev) => ({
-					...prev,
-					...data.scheduledPosting,
-				}));
+				if (data.scheduledPosting) {
+					const schedule = data.scheduledPosting.schedule || "9";
+					// Extract hour from potential old cron string format
+					const scheduleParts = schedule.split(" ");
+					const hour = scheduleParts.length > 1 ? scheduleParts[1] : schedule;
+
+					setScheduledPosting((prev) => ({
+						...prev,
+						...data.scheduledPosting,
+						schedule: parseInt(hour, 10) || 9,
+					}));
+				}
 
 				if (data.thumbnailGenConfig) {
 					setThumbnailGenConfig((prev) => ({
@@ -104,7 +112,10 @@ export default function AgentConfig() {
 						.filter(Boolean),
 				},
 				modelConfig,
-				scheduledPosting,
+				scheduledPosting: {
+					...scheduledPosting,
+					schedule: scheduledPosting.schedule,
+				},
 				thumbnailGenConfig,
 				updatedAt: serverTimestamp(),
 			};
@@ -290,10 +301,18 @@ export default function AgentConfig() {
 							</h3>
 							<label className="flex items-center gap-2 cursor-pointer group">
 								<div
-									className={`w-10 h-6 rounded-full p-1 transition-all ${thumbnailGenConfig.enabled ? "bg-emerald-500" : "bg-gray-200"}`}
+									className={`w-10 h-6 rounded-full p-1 transition-all ${
+										thumbnailGenConfig.enabled
+											? "bg-emerald-500"
+											: "bg-gray-200"
+									}`}
 								>
 									<div
-										className={`w-4 h-4 bg-white rounded-full transition-all transform ${thumbnailGenConfig.enabled ? "translate-x-4" : "translate-x-0"}`}
+										className={`w-4 h-4 bg-white rounded-full transition-all transform ${
+											thumbnailGenConfig.enabled
+												? "translate-x-4"
+												: "translate-x-0"
+										}`}
 									/>
 								</div>
 								<input
@@ -422,11 +441,14 @@ export default function AgentConfig() {
 									}
 									className="w-full px-5 py-3 rounded-2xl bg-slate-800 border border-slate-700 focus:border-amber-400 outline-none transition-all text-sm font-bold text-slate-200"
 								>
-									<option value="gemini-2.0-flash">
-										Gemini 2.0 Flash (Fast)
+									<option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+									<option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+									<option value="gemini-2.5-flash-lite">
+										Gemini 2.5 Flash Lite
 									</option>
-									<option value="gemini-1.5-pro">
-										Gemini 1.5 Pro (Brainy)
+									<option value="gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+									<option value="gemini-2.0-flash-lite-001">
+										Gemini 2.0 Flash Lite
 									</option>
 								</select>
 							</div>
@@ -503,10 +525,16 @@ export default function AgentConfig() {
 						<div className="space-y-6">
 							<label className="flex items-center gap-3 cursor-pointer group">
 								<div
-									className={`w-10 h-6 rounded-full p-1 transition-all ${scheduledPosting.enabled ? "bg-amber-500" : "bg-gray-200"}`}
+									className={`w-10 h-6 rounded-full p-1 transition-all ${
+										scheduledPosting.enabled ? "bg-amber-500" : "bg-gray-200"
+									}`}
 								>
 									<div
-										className={`w-4 h-4 bg-white rounded-full transition-all transform ${scheduledPosting.enabled ? "translate-x-4" : "translate-x-0"}`}
+										className={`w-4 h-4 bg-white rounded-full transition-all transform ${
+											scheduledPosting.enabled
+												? "translate-x-4"
+												: "translate-x-0"
+										}`}
 									/>
 								</div>
 								<input
@@ -524,29 +552,33 @@ export default function AgentConfig() {
 									Active Schedule
 								</span>
 							</label>
-
 							<div className="space-y-2">
 								<label
-									htmlFor="cron-expression"
+									htmlFor="schedule-hour"
 									className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1"
 								>
-									Cron Expression
+									Post Hour (UTC)
 								</label>
-								<input
-									id="cron-expression"
-									type="text"
+								<select
+									id="schedule-hour"
 									value={scheduledPosting.schedule}
 									onChange={(e) =>
 										setScheduledPosting({
 											...scheduledPosting,
-											schedule: e.target.value,
+											schedule: parseInt(e.target.value),
 										})
 									}
-									className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-amber-500 outline-none transition-all bg-gray-50/50 text-sm font-mono text-gray-800"
-								/>
+									className="w-full px-5 py-3 rounded-2xl border border-gray-100 focus:bg-white focus:border-amber-500 outline-none transition-all bg-gray-50/50 text-sm font-bold text-gray-800"
+								>
+									{Array.from({ length: 24 }, (_, i) => (
+										// biome-ignore lint/suspicious/noArrayIndexKey: allowed for hour selection
+										<option key={i} value={String(i)}>
+											{String(i).padStart(2, "0")}:00 UTC
+										</option>
+									))}
+								</select>
 								<p className="text-[10px] text-gray-400 font-medium px-1">
-									Example: <span className="text-gray-600">0 9 * * *</span>{" "}
-									(Daily at 9 AM)
+									The agent will attempt to post at this hour, every day.
 								</p>
 							</div>
 						</div>
