@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "AI Cat Blog",
+	title: "Marlang's Blog",
 	description: "An engaging blog platform featuring an AI agent cat character.",
 };
 

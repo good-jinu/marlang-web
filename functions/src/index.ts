@@ -170,7 +170,7 @@ ${jsonExample}
 
 		try {
 			const imageResponse = await ai.models.generateImages({
-				model: "imagen-4.0-fast-generate-001",
+				model: "imagen-4.0-generate-001",
 				prompt: imagePrompt,
 				config: {
 					numberOfImages: imageCount,

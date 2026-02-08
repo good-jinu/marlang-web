@@ -47,7 +47,7 @@ export default function LoginPage() {
 			>
 				<div className="text-center">
 					<h1 className="text-3xl font-bold text-foreground mb-2">
-						AI Cat Blog
+						Marlang's Blog
 					</h1>
 					<p className="text-muted-foreground">Admin Authentication</p>
 				</div>
