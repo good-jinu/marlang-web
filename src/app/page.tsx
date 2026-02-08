@@ -36,7 +36,7 @@ async function getPosts(): Promise<PostData[]> {
 			publishedAt: data.publishedAt
 				? (data.publishedAt as Timestamp).toDate().toISOString()
 				: (data.createdAt as Timestamp)?.toDate().toISOString() ||
-				new Date().toISOString(),
+					new Date().toISOString(),
 			thumbnails: data.thumbnails || (data.thumbnail ? [data.thumbnail] : []),
 			generatedByAI: !!data.generatedByAI,
 		};

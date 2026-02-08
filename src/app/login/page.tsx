@@ -46,7 +46,9 @@ export default function LoginPage() {
 				className="max-w-md w-full bg-card rounded-2xl shadow-xl p-8 space-y-8"
 			>
 				<div className="text-center">
-					<h1 className="text-3xl font-bold text-foreground mb-2">AI Cat Blog</h1>
+					<h1 className="text-3xl font-bold text-foreground mb-2">
+						AI Cat Blog
+					</h1>
 					<p className="text-muted-foreground">Admin Authentication</p>
 				</div>
 

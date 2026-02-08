@@ -8,6 +8,9 @@
 		"start": "next start",
 		"check": "npx biome check --write"
 	},
+	"engines": {
+		"node": "22"
+	},
 	"dependencies": {
 		"clsx": "^2.1.1",
 		"firebase": "^12.8.0",
