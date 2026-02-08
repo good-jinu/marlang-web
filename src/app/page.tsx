@@ -1,6 +1,17 @@
-import type { Timestamp } from "firebase-admin/firestore";
+"use client";
+
+import {
+	collection,
+	limit,
+	onSnapshot,
+	orderBy,
+	query,
+	type Timestamp,
+	where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 import BlogLayout from "@/components/BlogLayout";
-import { adminDb } from "@/lib/firebase/admin";
+import { db } from "@/lib/firebase/config";
 
 interface PostData {
 	id: string;
@@ -12,41 +23,64 @@ interface PostData {
 	generatedByAI: boolean;
 }
 
-async function getPosts(): Promise<PostData[]> {
-	const postsRef = adminDb.collection("posts");
-	const q = postsRef
-		.where("status", "==", "published")
-		.orderBy("publishedAt", "desc")
-		.limit(20);
+export default function Home() {
+	const [posts, setPosts] = useState<PostData[]>([]);
+	const [loading, setLoading] = useState(true);
 
-	const querySnapshot = await q.get();
+	useEffect(() => {
+		const postsRef = collection(db, "posts");
+		const q = query(
+			postsRef,
+			where("status", "==", "published"),
+			orderBy("publishedAt", "desc"),
+			limit(20),
+		);
 
-	if (querySnapshot.empty) {
-		return [];
+		const unsubscribe = onSnapshot(
+			q,
+			(querySnapshot) => {
+				const postsData = querySnapshot.docs.map((doc) => {
+					const data = doc.data();
+					return {
+						id: doc.id,
+						title:
+							data.title || data.content?.slice(0, 50) || "Untitled moment",
+						content: data.content || "",
+						author: data.author || "Marlang",
+						publishedAt: data.publishedAt
+							? (data.publishedAt as Timestamp).toDate().toISOString()
+							: data.createdAt
+								? (data.createdAt as Timestamp).toDate().toISOString()
+								: new Date().toISOString(),
+						thumbnails:
+							data.thumbnails || (data.thumbnail ? [data.thumbnail] : []),
+						generatedByAI: !!data.generatedByAI,
+					};
+				});
+				setPosts(postsData);
+				setLoading(false);
+			},
+			(error) => {
+				console.error("Error fetching posts:", error);
+				setLoading(false);
+			},
+		);
+
+		return () => unsubscribe();
+	}, []);
+
+	if (loading) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-background">
+				<div className="flex flex-col items-center gap-4">
+					<div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+					<p className="text-muted-foreground animate-pulse">
+						Gathering yarn balls...
+					</p>
+				</div>
+			</div>
+		);
 	}
-
-	const posts = querySnapshot.docs.map((doc) => {
-		const data = doc.data();
-		console.log("data: ", JSON.stringify(data));
-		return {
-			id: doc.id,
-			title: data.title || data.content?.slice(0, 50) || "Untitled moment",
-			content: data.content || "",
-			author: data.author || "Marlang",
-			publishedAt: data.publishedAt
-				? (data.publishedAt as Timestamp).toDate().toISOString()
-				: (data.createdAt as Timestamp)?.toDate().toISOString() ||
-					new Date().toISOString(),
-			thumbnails: data.thumbnails || (data.thumbnail ? [data.thumbnail] : []),
-			generatedByAI: !!data.generatedByAI,
-		};
-	});
-
-	return posts;
-}
-
-export default async function Home() {
-	const posts = await getPosts();
 
 	return <BlogLayout posts={posts} />;
 }

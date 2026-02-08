@@ -33,7 +33,7 @@ export default async function PostPage({
 						{thumbnails.map((thumb: string, index: number) => (
 							<div
 								key={thumb}
-								className="relative aspect-video rounded-2xl overflow-hidden border border-border shadow-lg"
+								className="relative aspect-square rounded-2xl overflow-hidden border border-border shadow-lg"
 							>
 								<Image
 									src={thumb}
