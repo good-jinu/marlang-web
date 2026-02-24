@@ -1,0 +1,77 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: "Deploy target"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - hosting
+          - functions
+      firebase_project_id:
+        description: "Firebase project ID"
+        required: true
+        default: marlang-web-0
+        type: string
+
+concurrency:
+  group: manual-deploy-${{ github.ref }}-${{ inputs.firebase_project_id }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      FIREBASE_PROJECT_ID: ${{ inputs.firebase_project_id }}
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install functions dependencies
+        run: npm --prefix functions ci
+
+      - name: Validate Firebase credentials
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "Missing secret: FIREBASE_SERVICE_ACCOUNT"
+            exit 1
+          fi
+
+      - name: Create service account key file
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Deploy to Firebase
+        run: |
+          case "${{ inputs.deploy_target }}" in
+            all)
+              npx firebase-tools deploy --project "$FIREBASE_PROJECT_ID"
+              ;;
+            hosting)
+              npx firebase-tools deploy --only hosting --project "$FIREBASE_PROJECT_ID"
+              ;;
+            functions)
+              npx firebase-tools deploy --only functions --project "$FIREBASE_PROJECT_ID"
+              ;;
+            *)
+              echo "Unknown deploy_target: ${{ inputs.deploy_target }}"
+              exit 1
+              ;;
+          esac
