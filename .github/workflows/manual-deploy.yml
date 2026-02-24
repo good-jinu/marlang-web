@@ -30,6 +30,7 @@ jobs:
     env:
       FIREBASE_PROJECT_ID: ${{ inputs.firebase_project_id }}
       FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      FIREBASE_CLI_EXPERIMENTS: webframeworks
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,6 +58,9 @@ jobs:
         run: |
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Enable Firebase webframeworks experiment
+        run: npx firebase-tools experiments:enable webframeworks --non-interactive || true
 
       - name: Deploy to Firebase
         run: |
