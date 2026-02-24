@@ -1,18 +1,29 @@
-import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { db } from "@/lib/firebase/config";
+import { adminDb } from "@/lib/firebase/admin";
+
+export const dynamic = "force-dynamic";
+
+interface Post {
+	title?: string;
+	content?: string;
+	thumbnails?: string[];
+	thumbnail?: string;
+}
 
 async function getPost(id: string) {
-	// Direct ID lookup
-	const docRef = doc(db, "posts", id);
-	const docSnap = await getDoc(docRef);
+	const docSnap = await adminDb.collection("posts").doc(id).get();
 
-	if (!docSnap.exists()) {
+	if (!docSnap.exists) {
 		notFound();
 	}
 
-	return docSnap.data();
+	const post = docSnap.data() as Post | undefined;
+	if (!post) {
+		notFound();
+	}
+
+	return post;
 }
 
 export default async function PostPage({
