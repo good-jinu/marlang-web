@@ -2,6 +2,8 @@
 
 import {
 	collection,
+	doc,
+	getDoc,
 	getDocs,
 	limit,
 	orderBy,
@@ -37,6 +39,10 @@ export default function AdminDashboard() {
 	});
 	const [recentPosts, setRecentPosts] = useState<Post[]>([]);
 	const [_loading, setLoading] = useState(true);
+	const [agentStatus, setAgentStatus] = useState<{
+		enabled: boolean;
+		loading: boolean;
+	}>({ enabled: false, loading: true });
 
 	useEffect(() => {
 		async function fetchDashboardData() {
@@ -63,8 +69,22 @@ export default function AdminDashboard() {
 						(doc) => ({ ...doc.data(), id: doc.id }) as Post,
 					),
 				);
+
+				// Fetch Agent Config
+				const agentDocRef = doc(db, "aiAgents", "main");
+				const agentSnap = await getDoc(agentDocRef);
+				if (agentSnap.exists()) {
+					const data = agentSnap.data();
+					setAgentStatus({
+						enabled: data.scheduledPosting?.enabled || false,
+						loading: false,
+					});
+				} else {
+					setAgentStatus({ enabled: false, loading: false });
+				}
 			} catch (error) {
 				console.error("Error fetching dashboard data:", error);
+				setAgentStatus((prev) => ({ ...prev, loading: false }));
 			} finally {
 				setLoading(false);
 			}
@@ -242,9 +262,19 @@ export default function AdminDashboard() {
 							</div>
 							<div className="flex items-center justify-between text-sm">
 								<span className="text-gray-500">Scheduled Posts</span>
-								<span className="bg-green-50 text-green-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
-									Enabled
-								</span>
+								{agentStatus.loading ? (
+									<span className="text-gray-400 text-[10px] animate-pulse">
+										Loading...
+									</span>
+								) : agentStatus.enabled ? (
+									<span className="bg-green-50 text-green-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+										Enabled
+									</span>
+								) : (
+									<span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase">
+										Disabled
+									</span>
+								)}
 							</div>
 							<Link
 								href="/admin/agent"
