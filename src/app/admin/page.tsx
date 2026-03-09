@@ -11,7 +11,6 @@ import {
 	type Timestamp,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase/config";
@@ -176,12 +175,9 @@ export default function AdminDashboard() {
 									<div className="flex items-center gap-4">
 										<div className="w-10 h-10 rounded bg-gray-100 flex-shrink-0 overflow-hidden">
 											{post.thumbnail && (
-												<Image
+												<img
 													src={post.thumbnail}
 													alt={post.title}
-													width={40}
-													height={40}
-													sizes="(max-width: 768px) 100vw, 40px"
 													className="w-full h-full object-cover"
 												/>
 											)}
