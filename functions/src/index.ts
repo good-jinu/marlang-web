@@ -6,10 +6,30 @@ import { getDownloadURL, getStorage } from "firebase-admin/storage";
 import { logger } from "firebase-functions/v2";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import sharp from "sharp";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 initializeApp();
+
+/* ------------------------------------------------------------------ */
+/* Image Conversion */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Converts a PNG buffer to WebP, saves it to Firebase Storage, and returns
+ * the download URL. The original PNG is never persisted to storage.
+ */
+async function convertAndSaveImage(
+	bucket: ReturnType<typeof getStorage>["bucket"],
+	pngBuffer: Buffer,
+): Promise<string> {
+	const webpBuffer = await sharp(pngBuffer).webp({ quality: 85 }).toBuffer();
+	const filename = `post-images/${crypto.randomUUID()}.webp`;
+	const file = bucket.file(filename);
+	await file.save(webpBuffer, { contentType: "image/webp" });
+	return getDownloadURL(file);
+}
 
 /* ------------------------------------------------------------------ */
 /* Schemas */
@@ -182,31 +202,28 @@ ${jsonExample}
 			);
 
 			if (imageResponse.generatedImages) {
-				for (let i = 0; i < imageResponse.generatedImages.length; i++) {
-					const generatedImage = imageResponse.generatedImages[i];
-					if (!generatedImage.image) {
-						logger.warn(`No image data for image ${i + 1}`);
-						continue;
-					}
-					const imgBytes = generatedImage.image.imageBytes;
+				const conversionPromises = imageResponse.generatedImages.map(
+					async (generatedImage, i) => {
+						if (!generatedImage.image?.imageBytes) {
+							logger.warn(`No image bytes for image ${i + 1}`);
+							return null;
+						}
+						const pngBuffer = Buffer.from(
+							generatedImage.image.imageBytes,
+							"base64",
+						);
+						logger.info(
+							`Converting image ${i + 1} from PNG to WebP asynchronously...`,
+						);
+						const url = await convertAndSaveImage(storage, pngBuffer);
+						logger.info(`Image ${i + 1} converted to WebP and saved`);
+						return url;
+					},
+				);
 
-					if (!imgBytes) {
-						logger.warn(`No image bytes for image ${i + 1}`);
-						continue;
-					}
-
-					const buffer = Buffer.from(imgBytes, "base64");
-					const filename = `post-images/${crypto.randomUUID()}.png`;
-					const file = storage.file(filename);
-
-					logger.info(`Uploading image ${i + 1} to storage...`);
-					await file.save(buffer, {
-						contentType: "image/png",
-					});
-
-					const url = await getDownloadURL(file);
-					imageUrls.push(url);
-					logger.info(`Image ${i + 1} saved and Download URL created`);
+				const results = await Promise.all(conversionPromises);
+				for (const url of results) {
+					if (url) imageUrls.push(url);
 				}
 			}
 		} catch (error: unknown) {
