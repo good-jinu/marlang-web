@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Loader2, Plus, X } from "lucide-react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { db, storage } from "@/lib/firebase/config";
@@ -199,10 +200,11 @@ export default function PostEditor() {
 									key={url}
 									className="relative aspect-square rounded-xl overflow-hidden group border border-border"
 								>
-									<img
+									<Image
 										src={url}
 										alt={`Thumbnail ${index + 1}`}
-										className="absolute inset-0 h-full w-full object-cover"
+										fill
+										className="object-cover"
 									/>
 									<button
 										type="button"

@@ -10,6 +10,7 @@ import {
 	type Timestamp,
 } from "firebase/firestore";
 import { Edit, Image as ImageIcon, Trash2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { db } from "@/lib/firebase/config";
@@ -144,10 +145,11 @@ export default function PostsManagement() {
 												<div className="flex items-center gap-4">
 													<div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 relative">
 														{mainThumbnail ? (
-															<img
+															<Image
 																src={mainThumbnail}
 																alt={post.title || "Post thumbnail"}
-																className="absolute inset-0 h-full w-full object-cover"
+																fill
+																className="object-cover"
 															/>
 														) : (
 															<div className="w-full h-full flex items-center justify-center text-gray-300">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { adminDb } from "@/lib/firebase/admin";
 
@@ -45,11 +46,13 @@ export default async function PostPage({
 								key={thumb}
 								className="relative aspect-square rounded-2xl overflow-hidden border border-border shadow-lg"
 							>
-								<img
+								<Image
 									src={thumb}
 									alt={`Post image ${index + 1}`}
-									loading={index === 0 ? "eager" : "lazy"}
-									className="absolute inset-0 h-full w-full object-cover"
+									fill
+									className="object-cover"
+									priority={index === 0}
+									sizes="(max-width: 896px) 100vw, 896px"
 								/>
 							</div>
 						))}
